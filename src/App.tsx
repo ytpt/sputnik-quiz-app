@@ -36,7 +36,7 @@ export const App = () => {
         setLoading(false);
     }
 
-    const checkAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const checkAnswer = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!gameOver) {
             const answer = e.currentTarget.value;
 

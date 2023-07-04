@@ -5,7 +5,7 @@ import { Wrapper, ButtonWrapper } from "./QuestionCard.styles";
 type Props = {
     question: string;
     answers: string[];
-    callback: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    callback: (e: React.ChangeEvent<HTMLInputElement>) => void;
     userAnswer: AnswerObject | undefined;
     questionNumber: number;
     totalQuestions: number;
@@ -32,13 +32,14 @@ const QuestionCard: React.FC<Props> = ({
                         correct={ userAnswer?.correctAnswer === answer }
                         userClicked={ userAnswer?.answer === answer }
                     >
-                        <button
-                            disabled={ !!userAnswer }
+                        <input
+                            type="checkbox"
+                            name="option"
                             value={ answer }
-                            onClick={ callback }
-                        >
-                            <span dangerouslySetInnerHTML={{ __html: answer }} />
-                        </button>
+                            onChange={ callback }
+                            disabled={ !!userAnswer }
+                        />
+                        <label>{ answer }</label>
                     </ButtonWrapper>
                 )))}
             </div>

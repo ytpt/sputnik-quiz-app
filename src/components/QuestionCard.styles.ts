@@ -6,32 +6,30 @@ type ButtonWrapperProps = {
 }
 
 export const Wrapper = styled.div`
-    max-width: 1100px;    
+    width: 800px;  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;  
 `;
 
 export const ButtonWrapper = styled.div<ButtonWrapperProps>`
+    width: max-content;
+    display: flex; 
+    justify-content: space-between;
+    flex-direction: row;
+    column-gap: 5px;
     transition: all 0.3s ease;
-    display: flex;
     
     :hover {
         opacity: 0.8;
     }
     
-    button {
+    input {
         cursor: pointer;
         user-select: none;
-        font-size: 0.8rem;
-        width: 50%;
-        height: 40px;
-        margin: 5px 0;
-        background: ${({ correct, userClicked }) =>
-            correct
-                ? "liner-gradient(90deg, #56ffa4, #59bc86)"
-                : !correct && userClicked
-                    ? "liner-gradient(90deg, #ff5656, #c16868)"
-                    : "liner-gradient(90deg, blue, aqua)"
-        }
+        width: 25px;
+        height: 25px;
         border: 3px solid #fff;
-        border-radius: 10px;
     }
 `;
