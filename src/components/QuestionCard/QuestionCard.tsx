@@ -1,5 +1,5 @@
 import React from "react";
-import { AnswerObject } from "../App";
+import { AnswerObject } from "../../App";
 import { Wrapper, ButtonWrapper } from "./QuestionCard.styles";
 
 type Props = {
@@ -8,7 +8,6 @@ type Props = {
     callback: (e: React.ChangeEvent<HTMLInputElement>) => void;
     userAnswer: AnswerObject | undefined;
     questionNumber: number;
-    totalQuestions: number;
 }
 
 const QuestionCard: React.FC<Props> = ({
@@ -17,12 +16,11 @@ const QuestionCard: React.FC<Props> = ({
     callback,
     userAnswer,
     questionNumber,
-    totalQuestions
 }) => {
     return (
         <Wrapper>
             <p className="number">
-                { questionNumber } / { totalQuestions }
+                Вопрос №{ questionNumber }
             </p>
             <p dangerouslySetInnerHTML={{ __html: question }} />
             <div>

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import QuestionCard from "./components/QuestionCard";
+import QuestionCard from "./components/QuestionCard/QuestionCard";
 import { Difficulty, fetchQuizQuestions, QuestionState } from "./API";
 import { GlobalStyle, Wrapper } from "./App.styles";
+import ResultsButton from "./components/ResultsButton/ResultsButton";
 
 export type AnswerObject = {
     question: string;
@@ -73,12 +74,10 @@ export const App = () => {
                     ? (<button className="start" onClick={ startQuiz }>Начать</button>)
                     : null
                 }
-                { !gameOver && <p className="score">Верно: { score }</p> }
                 { loading && <p>Загрузка...</p> }
                 { !loading && !gameOver
                     && (<QuestionCard
                         questionNumber={ number + 1 }
-                        totalQuestions={ TOTAL_QUESTIONS }
                         question={ questions[number].question }
                         answers={ questions[number].answers }
                         userAnswer={ userAnswers ? userAnswers[number] : undefined }
@@ -89,8 +88,20 @@ export const App = () => {
                     && !loading
                     && userAnswers.length === number + 1
                     && number !== TOTAL_QUESTIONS - 1
-                    ? (<button className="next" onClick={ nextQuestion }>Следующий вопрос</button>)
-                    : null
+                    && (<button
+                        type="button"
+                        className="next"
+                        onClick={ nextQuestion }
+                    >
+                        Следующий вопрос
+                    </button>)
+                }
+                { !loading && !gameOver
+                    && (<ResultsButton
+                        score={ score }
+                        gameOver={ gameOver }
+                        totalQuestions={ TOTAL_QUESTIONS }
+                    />)
                 }
             </Wrapper>
         </>
