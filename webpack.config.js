@@ -3,7 +3,6 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
     entry: "./src/index.tsx",
-    //webpack-dev-server settings
     devServer: {
         static: path.join(__dirname, "dist"),
         port: 3001,
