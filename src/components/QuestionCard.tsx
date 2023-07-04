@@ -1,6 +1,6 @@
 import React from "react";
-import { AnswerObject } from "../../App";
-import { Wrapper, ButtonWrapper } from "./QuestionCard.styles";
+import { AnswerObject } from "../App";
+import { Wrapper, ButtonWrapper } from "./QuestionCard/QuestionCard.styles";
 
 type Props = {
     question: string;
@@ -20,7 +20,7 @@ const QuestionCard: React.FC<Props> = ({
     return (
         <Wrapper>
             <p className="number">
-                Вопрос №{ questionNumber }
+                Вопрос №{ questionNumber + 1 }
             </p>
             <p dangerouslySetInnerHTML={{ __html: question }} />
             <div>
