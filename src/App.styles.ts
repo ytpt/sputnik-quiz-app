@@ -15,12 +15,7 @@ export const GlobalStyle = createGlobalStyle`
     body {
         background-image: url(${ BGImage });
         background-size: cover;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
         color: white;
-        height: 100%;
     }
     
     button {
@@ -33,6 +28,8 @@ export const GlobalStyle = createGlobalStyle`
 `;
 
 export const Wrapper = styled.div`
+    width: fit-content;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -40,7 +37,9 @@ export const Wrapper = styled.div`
     background-color: #5272af;
     padding: 10px;
     vertical-align: middle;
-    border-radius: 14%;
+    border-radius: 40px;
+    margin: 0 auto;
+    border: 1px solid white;
     
     .score {
         font-size: 2rem;
