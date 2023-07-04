@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import QuestionCard from "./components/QuestionCard";
-import { QuestionState, getQuizQuestions } from "./API";
 import { GlobalStyle, Wrapper } from "./App.styles";
+import { useSelector, useDispatch } from "react-redux";
+import { handleUserScoreChange } from "./redux/actions";
+import { IState } from "./redux/userScoreReducer";
+import { initialState, IQuestions } from "../src/redux/questionsReducer";
+import { shuffleArray } from "./utils";
 
 export type AnswerObject = {
     question: string;
@@ -13,24 +17,21 @@ export type AnswerObject = {
 const TOTAL_QUESTIONS = 10;
 
 export const App = () => {
-    const [loading, setLoading] = useState(false);
-    const [questions, setQuestions] = useState<QuestionState[]>([]);
+    const [questions, setQuestions] = useState<IQuestions>([]);
     const [number, setNumber] = useState(0);
     const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([]);
-    const [score, setScore] = useState(0);
     const [gameOver, setGameOver] = useState(true);
 
-    const startQuiz = async () => {
-        setLoading(true);
+    const userScore: number = useSelector((state: IState) => state.user_score);
+    const dispatch = useDispatch();
+
+    const startQuiz = () => {
         setGameOver(false);
-
-        const newQuestions = getQuizQuestions();
-
+        const newQuestions: IQuestions = shuffleArray(initialState);
         setQuestions(newQuestions);
-        setScore(0);
+        dispatch(handleUserScoreChange(0));
         setUserAnswers([]);
         setNumber(0);
-        setLoading(false);
     }
 
     const checkAnswer = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,7 +40,7 @@ export const App = () => {
 
             const correct = questions[number].correct_answer === answer;
 
-            if (correct) setScore(prev => prev + 1);
+            if (correct) dispatch(handleUserScoreChange(userScore + 1));
 
             const answerObject = {
                 question: questions[number].question,
@@ -51,15 +52,6 @@ export const App = () => {
         }
     }
 
-    const nextQuestion = () => {
-        const nextQuestion = number + 1;
-
-        if (nextQuestion === TOTAL_QUESTIONS) {
-            setGameOver(true);
-        } else {
-            setNumber(nextQuestion);
-        }
-    }
 
     return (
         <>
@@ -67,27 +59,23 @@ export const App = () => {
             <Wrapper>
                 <h1>Квиз</h1>
                 { gameOver || userAnswers.length === TOTAL_QUESTIONS
-                    ? (<button className="start" onClick={ startQuiz }>Начать</button>)
+                    ? (<button className="start" onClick={ startQuiz }>
+                            Начать
+                        </button>)
                     : null
-                }
-                { !gameOver && <p className="score">Верно: { score }</p> }
-                { loading && <p>Загрузка...</p> }
-                { !loading && !gameOver
-                && (<QuestionCard
-                    questionNumber={ number + 1 }
-                    question={ questions[number].question }
-                    answers={ questions[number].answers }
-                    userAnswer={ userAnswers ? userAnswers[number] : undefined }
-                    callback={ checkAnswer }
-                />)
                 }
                 { !gameOver
-                && !loading
-                && userAnswers.length === number + 1
-                && number !== TOTAL_QUESTIONS - 1
-                    ? (<button className="next" onClick={ nextQuestion }>Следующий вопрос</button>)
-                    : null
+                    && questions.map((question, index) => (
+                        <QuestionCard
+                            questionNumber={ index }
+                            question={ question.question }
+                            answers={ question.options }
+                            userAnswer={ userAnswers ? userAnswers[number] : undefined }
+                            callback={ checkAnswer }
+                        />
+                    ))
                 }
+                { !gameOver && <p className="score">Верно: { userScore }</p> }
             </Wrapper>
         </>
     )
