@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import QuestionCard from "./components/QuestionCard/QuestionCard";
-import { Difficulty, fetchQuizQuestions, QuestionState } from "./API";
+import QuestionCard from "./components/QuestionCard";
+import { QuestionState, getQuizQuestions } from "./API";
 import { GlobalStyle, Wrapper } from "./App.styles";
-import ResultsButton from "./components/ResultsButton/ResultsButton";
 
 export type AnswerObject = {
     question: string;
@@ -25,10 +24,7 @@ export const App = () => {
         setLoading(true);
         setGameOver(false);
 
-        const newQuestions = await fetchQuizQuestions(
-            TOTAL_QUESTIONS,
-            Difficulty.EASY
-        );
+        const newQuestions = getQuizQuestions();
 
         setQuestions(newQuestions);
         setScore(0);
@@ -74,34 +70,23 @@ export const App = () => {
                     ? (<button className="start" onClick={ startQuiz }>Начать</button>)
                     : null
                 }
+                { !gameOver && <p className="score">Верно: { score }</p> }
                 { loading && <p>Загрузка...</p> }
                 { !loading && !gameOver
-                    && (<QuestionCard
-                        questionNumber={ number + 1 }
-                        question={ questions[number].question }
-                        answers={ questions[number].answers }
-                        userAnswer={ userAnswers ? userAnswers[number] : undefined }
-                        callback={ checkAnswer }
-                    />)
+                && (<QuestionCard
+                    questionNumber={ number + 1 }
+                    question={ questions[number].question }
+                    answers={ questions[number].answers }
+                    userAnswer={ userAnswers ? userAnswers[number] : undefined }
+                    callback={ checkAnswer }
+                />)
                 }
                 { !gameOver
-                    && !loading
-                    && userAnswers.length === number + 1
-                    && number !== TOTAL_QUESTIONS - 1
-                    && (<button
-                        type="button"
-                        className="next"
-                        onClick={ nextQuestion }
-                    >
-                        Следующий вопрос
-                    </button>)
-                }
-                { !loading && !gameOver
-                    && (<ResultsButton
-                        score={ score }
-                        gameOver={ gameOver }
-                        totalQuestions={ TOTAL_QUESTIONS }
-                    />)
+                && !loading
+                && userAnswers.length === number + 1
+                && number !== TOTAL_QUESTIONS - 1
+                    ? (<button className="next" onClick={ nextQuestion }>Следующий вопрос</button>)
+                    : null
                 }
             </Wrapper>
         </>
