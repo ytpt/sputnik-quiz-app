@@ -1,5 +1,7 @@
 import React from "react";
 import { Wrapper } from "./ChkBox.styles";
+import { useDispatch } from "react-redux";
+import { handleUserScoreChange } from "../../redux/actions";
 
 type Props = {
     variant: string;
@@ -17,11 +19,11 @@ const ChkBox: React.FC<Props> = ({
      setClicked,
 }) => {
 
-    const onClick = () => {
-        console.log(right)
-        console.log(variant)
-        console.log(variant === right);
+    const dispatch = useDispatch();
+
+    const checkAnswers = () => {
         setClicked(true);
+        variant === right && dispatch(handleUserScoreChange(1));
     };
 
     return (
@@ -29,7 +31,7 @@ const ChkBox: React.FC<Props> = ({
             <label>
                 <input
                     type="checkbox"
-                    onClick={ onClick }
+                    onClick={ checkAnswers }
                     id={ variant }
                     disabled={ clicked }
                 />

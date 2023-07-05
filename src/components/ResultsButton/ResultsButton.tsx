@@ -1,38 +1,54 @@
 import React, { useState } from "react";
+import StartButton from "../StartButton/StartButton";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 type Props = {
-    score: number;
-    gameOver: boolean;
-    totalQuestions: number;
+    userScore: number;
+    totalQuestionsCount: number;
 }
 
 const ResultsButton: React.FC<Props> = ({
-   score,
-   gameOver,
-   totalQuestions,
+    userScore,
+    totalQuestionsCount,
 }) => {
+
+    const startQuiz = useSelector((state: RootState) => state.startQuiz);
+
     const [isScoreShown, setScoreShown] = useState(false);
 
     const showResult = () => {
         setScoreShown(true);
+
+        //Все чекбоксы становятся неактивными
     }
 
     return (
         <>
-            { !isScoreShown
-                && <button
-                    type="button"
-                    className="results"
-                    onClick={ showResult }
+            {
+                startQuiz.start_quiz && !isScoreShown
+                    && <button
+                        type="button"
+                        className="results"
+                        onClick={ showResult }
                     >
-                        Узнать результат
+                            Узнать результат
                     </button>
             }
-            { gameOver || isScoreShown
-                && <div>
-                    <p className="score">Верных: { score } из { totalQuestions }</p>
-                    <p className="score">Неверных или неотвеченных: { totalQuestions - score } из { totalQuestions }</p>
-                </div>
+            {
+                !startQuiz.start_quiz || isScoreShown
+                    && (<div>
+                            <p className="score">Верных:
+                                { userScore } из { totalQuestionsCount }
+                            </p>
+                            <p className="score">Неверных или неотвеченных:
+                                { totalQuestionsCount - userScore } из { totalQuestionsCount }
+                            </p>
+                    </div>)
+            }
+            {
+                startQuiz.start_quiz  && isScoreShown
+                    && <StartButton value={ "Начать заново?" } />
             }
         </>
     )

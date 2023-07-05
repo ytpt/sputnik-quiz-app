@@ -1,13 +1,10 @@
 import React, { useState } from "react";
-import { AnswerObject } from "../../App";
-import { Wrapper, ButtonWrapper } from "./QuestionCard.styles";
-import { shuffleArray } from "../../utils";
+import { Wrapper } from "./QuestionCard.styles";
 import ChkBox from "../ChkBox/ChkBox";
 
 type Props = {
     question: string;
     answers: string[];
-    userAnswer: AnswerObject | undefined;
     questionNumber: number;
     right: string;
 }
@@ -15,7 +12,6 @@ type Props = {
 const QuestionCard: React.FC<Props> = ({
     question,
     answers,
-    userAnswer,
     questionNumber,
     right,
 }) => {
@@ -41,9 +37,7 @@ const QuestionCard: React.FC<Props> = ({
 
     return (
         <Wrapper>
-            <h2 className="c">
-                Вопрос №{ questionNumber + 1 }
-            </h2>
+            <h2>Вопрос №{ questionNumber + 1 }</h2>
             <h3 dangerouslySetInnerHTML={{ __html: question }} />
             <div>
                 { renderAnswers() }

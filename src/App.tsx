@@ -1,37 +1,21 @@
 import React, { useState } from "react";
 import QuestionCard from "./components/QuestionCard/QuestionCard";
 import { GlobalStyle, Wrapper } from "./App.styles";
-import { useSelector, useDispatch } from "react-redux";
-import { handleUserScoreChange } from "./redux/actions";
-import { shuffleArray } from "./utils";
+import { useSelector } from "react-redux";
 import ResultsButton from "./components/ResultsButton/ResultsButton";
 import { RootState } from "./redux/store";
-
-export type AnswerObject = {
-    question: string;
-    answer: string;
-    correct: boolean;
-    correctAnswer: string;
-}
+import StartButton from "./components/StartButton/StartButton";
 
 export const App = () => {
 
+    const startQuiz = useSelector((state: RootState) => state.startQuiz);
     const newQuestions = useSelector((state: RootState) => state.questions);
     const userScore = useSelector((state: RootState) => state.userScore);
-    const dispatch = useDispatch();
 
     const [totalQuestionsCount, setTotalQuestionsCount] = useState(newQuestions.length);
-    const [number, setNumber] = useState(0);
-    const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([]);
-    const [gameOver, setGameOver] = useState(true);
 
-    const startQuiz = () => {
-
-        setGameOver(false);
-        dispatch(handleUserScoreChange(0));
-        setUserAnswers([]);
-        setNumber(0);
-    }
+    // Нужно добавить пагинацию по 5 вопрсоов на страницу
+    // const [pageNumber, setPageNumber] = useState(0);
 
     return (
         <>
@@ -39,14 +23,8 @@ export const App = () => {
             <Wrapper>
                 <h1>Квиз</h1>
                 {
-                    gameOver
-                        && (<button className="start" onClick={ startQuiz }>
-                            Начать
-                        </button>)
-                }
-                {
-                    !gameOver
-                        && shuffleArray(newQuestions).map((question, index) => (
+                    startQuiz.start_quiz
+                        && newQuestions.map((question, index) => (
                             <QuestionCard
                                 key={ index }
                                 questionNumber={ index }
@@ -56,18 +34,17 @@ export const App = () => {
                                     question.correct_answer
                                 ]}
                                 right={ question.correct_answer }
-                                userAnswer={ userAnswers ? userAnswers[number] : undefined }
                             />
                         ))
                 }
                 {
-                    !gameOver
+                    startQuiz.start_quiz
                         && <ResultsButton
                             userScore={ userScore.user_score }
-                            gameOver={ gameOver }
                             totalQuestionsCount={ totalQuestionsCount }
                         />
                 }
+                { !startQuiz.start_quiz && <StartButton value={ "Начать?" } /> }
             </Wrapper>
         </>
     )
