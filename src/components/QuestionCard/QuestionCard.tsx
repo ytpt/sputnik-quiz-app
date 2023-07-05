@@ -1,6 +1,8 @@
 import React from "react";
 import { AnswerObject } from "../../App";
 import { Wrapper, ButtonWrapper } from "./QuestionCard.styles";
+import { shuffleArray } from "../../utils";
+import ChkBox from "../ChkBox/ChkBox";
 
 type Props = {
     question: string;
@@ -19,25 +21,22 @@ const QuestionCard: React.FC<Props> = ({
 }) => {
     return (
         <Wrapper>
-            <p className="number">
-                Вопрос №{ questionNumber }
-            </p>
-            <p dangerouslySetInnerHTML={{ __html: question }} />
+            <h2 className="c">
+                Вопрос №{ questionNumber + 1 }
+            </h2>
+            <h3 dangerouslySetInnerHTML={{ __html: question }} />
             <div>
-                { answers.map((answer => (
+                { shuffleArray(answers).map((answer => (
                     <ButtonWrapper
                         key={ answer }
                         correct={ userAnswer?.correctAnswer === answer }
                         userClicked={ userAnswer?.answer === answer }
                     >
-                        <input
-                            type="checkbox"
-                            name="option"
+                        <ChkBox
                             value={ answer }
                             onChange={ callback }
                             disabled={ !!userAnswer }
                         />
-                        <label>{ answer }</label>
                     </ButtonWrapper>
                 )))}
             </div>
