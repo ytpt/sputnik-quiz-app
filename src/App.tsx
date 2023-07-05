@@ -1,7 +1,11 @@
 import React, { useState } from "react";
-import QuestionCard from "./components/QuestionCard";
-import { QuestionState, getQuizQuestions } from "./API";
+import QuestionCard from "./components/QuestionCard/QuestionCard";
 import { GlobalStyle, Wrapper } from "./App.styles";
+import { useSelector, useDispatch } from "react-redux";
+import { handleUserScoreChange } from "./redux/actions";
+import { shuffleArray } from "./utils";
+import ResultsButton from "./components/ResultsButton/ResultsButton";
+import { RootState } from "./redux/store";
 
 export type AnswerObject = {
     question: string;
@@ -10,55 +14,23 @@ export type AnswerObject = {
     correctAnswer: string;
 }
 
-const TOTAL_QUESTIONS = 10;
-
 export const App = () => {
-    const [loading, setLoading] = useState(false);
-    const [questions, setQuestions] = useState<QuestionState[]>([]);
+
+    const newQuestions = useSelector((state: RootState) => state.questions);
+    const userScore = useSelector((state: RootState) => state.userScore);
+    const dispatch = useDispatch();
+
+    const [totalQuestionsCount, setTotalQuestionsCount] = useState(newQuestions.length);
     const [number, setNumber] = useState(0);
     const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([]);
-    const [score, setScore] = useState(0);
     const [gameOver, setGameOver] = useState(true);
 
-    const startQuiz = async () => {
-        setLoading(true);
+    const startQuiz = () => {
+
         setGameOver(false);
-
-        const newQuestions = getQuizQuestions();
-
-        setQuestions(newQuestions);
-        setScore(0);
+        dispatch(handleUserScoreChange(0));
         setUserAnswers([]);
         setNumber(0);
-        setLoading(false);
-    }
-
-    const checkAnswer = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!gameOver) {
-            const answer = e.currentTarget.value;
-
-            const correct = questions[number].correct_answer === answer;
-
-            if (correct) setScore(prev => prev + 1);
-
-            const answerObject = {
-                question: questions[number].question,
-                answer,
-                correct,
-                correctAnswer: questions[number].correct_answer,
-            }
-            setUserAnswers((prev) => [...prev, answerObject]);
-        }
-    }
-
-    const nextQuestion = () => {
-        const nextQuestion = number + 1;
-
-        if (nextQuestion === TOTAL_QUESTIONS) {
-            setGameOver(true);
-        } else {
-            setNumber(nextQuestion);
-        }
     }
 
     return (
@@ -66,27 +38,35 @@ export const App = () => {
             <GlobalStyle />
             <Wrapper>
                 <h1>Квиз</h1>
-                { gameOver || userAnswers.length === TOTAL_QUESTIONS
-                    ? (<button className="start" onClick={ startQuiz }>Начать</button>)
-                    : null
+                {
+                    gameOver
+                        && (<button className="start" onClick={ startQuiz }>
+                            Начать
+                        </button>)
                 }
-                { !gameOver && <p className="score">Верно: { score }</p> }
-                { loading && <p>Загрузка...</p> }
-                { !loading && !gameOver
-                && (<QuestionCard
-                    questionNumber={ number + 1 }
-                    question={ questions[number].question }
-                    answers={ questions[number].answers }
-                    userAnswer={ userAnswers ? userAnswers[number] : undefined }
-                    callback={ checkAnswer }
-                />)
+                {
+                    !gameOver
+                        && shuffleArray(newQuestions).map((question, index) => (
+                            <QuestionCard
+                                key={ index }
+                                questionNumber={ index }
+                                question={ question.question }
+                                answers={[
+                                    ...question.incorrect_answers,
+                                    question.correct_answer
+                                ]}
+                                right={ question.correct_answer }
+                                userAnswer={ userAnswers ? userAnswers[number] : undefined }
+                            />
+                        ))
                 }
-                { !gameOver
-                && !loading
-                && userAnswers.length === number + 1
-                && number !== TOTAL_QUESTIONS - 1
-                    ? (<button className="next" onClick={ nextQuestion }>Следующий вопрос</button>)
-                    : null
+                {
+                    !gameOver
+                        && <ResultsButton
+                            userScore={ userScore.user_score }
+                            gameOver={ gameOver }
+                            totalQuestionsCount={ totalQuestionsCount }
+                        />
                 }
             </Wrapper>
         </>
