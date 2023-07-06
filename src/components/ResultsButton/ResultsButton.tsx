@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import StartButton from "../StartButton/StartButton";
-import { useSelector } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import { RootState } from "../../redux/store";
+import {handleStartQuiz, handleUserScoreChange} from "../../redux/actions";
 
 type Props = {
     userScore: number;
@@ -13,6 +13,7 @@ const ResultsButton: React.FC<Props> = ({
     totalQuestionsCount,
 }) => {
 
+    const dispatch = useDispatch();
     const startQuiz = useSelector((state: RootState) => state.startQuiz);
 
     const [isScoreShown, setScoreShown] = useState(false);
@@ -21,6 +22,10 @@ const ResultsButton: React.FC<Props> = ({
         setScoreShown(true);
 
         //Все чекбоксы становятся неактивными
+    }
+
+    const restartQuiz = () => {
+        dispatch(handleStartQuiz(false));
     }
 
     return (
@@ -48,7 +53,9 @@ const ResultsButton: React.FC<Props> = ({
             }
             {
                 startQuiz.start_quiz  && isScoreShown
-                    && <StartButton value={ "Начать заново?" } />
+                    &&  <button onClick={ restartQuiz }>
+                        Начать заново?
+                    </button>
             }
         </>
     )
