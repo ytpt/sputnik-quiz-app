@@ -7,22 +7,21 @@ type Props = {
     variant: string;
     label: string;
     right: string;
-    clicked: boolean;
-    setClicked: (boolean) => void;
+    isClicked: boolean;
+    setIsClicked: (boolean) => void;
 }
 
 const ChkBox: React.FC<Props> = ({
      variant,
      label,
      right,
-     clicked,
-     setClicked,
+     isClicked,
+
 }) => {
 
     const dispatch = useDispatch();
 
     const checkAnswers = () => {
-        setClicked(true);
         variant === right && dispatch(handleUserScoreChange(1));
     };
 
@@ -33,7 +32,7 @@ const ChkBox: React.FC<Props> = ({
                     type="checkbox"
                     onClick={ checkAnswers }
                     id={ variant }
-                    disabled={ clicked }
+                    disabled={ isClicked }
                 />
                 <p>{ label }</p>
             </label>

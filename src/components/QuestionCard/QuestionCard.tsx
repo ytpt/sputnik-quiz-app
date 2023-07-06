@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Wrapper } from "./QuestionCard.styles";
 import ChkBox from "../ChkBox/ChkBox";
 
@@ -7,6 +7,8 @@ type Props = {
     answers: string[];
     questionNumber: number;
     right: string;
+    isClicked: boolean;
+    setIsClicked: (boolean) => void;
 }
 
 const QuestionCard: React.FC<Props> = ({
@@ -14,9 +16,9 @@ const QuestionCard: React.FC<Props> = ({
     answers,
     questionNumber,
     right,
+    isClicked,
+    setIsClicked,
 }) => {
-
-    const [clicked, setClicked] = useState(false);
 
     const renderAnswers = () => {
         const answersList = [];
@@ -27,8 +29,8 @@ const QuestionCard: React.FC<Props> = ({
                     variant={ answers[answer] }
                     label={ answers[answer] }
                     right={ right }
-                    clicked={ clicked }
-                    setClicked={ setClicked }
+                    isClicked={ isClicked }
+                    setIsClicked={ setIsClicked }
                 />
             );
         }

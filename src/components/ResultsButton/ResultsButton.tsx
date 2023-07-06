@@ -1,37 +1,39 @@
 import React, { useState } from "react";
-import {useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import {handleStartQuiz, handleUserScoreChange} from "../../redux/actions";
+import { handleStartQuiz } from "../../redux/actions";
 
 type Props = {
     userScore: number;
     totalQuestionsCount: number;
+    setIsClicked: (boolean) => void;
 }
 
 const ResultsButton: React.FC<Props> = ({
     userScore,
     totalQuestionsCount,
+    setIsClicked,
 }) => {
 
     const dispatch = useDispatch();
-    const startQuiz = useSelector((state: RootState) => state.startQuiz);
+    const isGameStarted = useSelector((state: RootState) => state.isGameStarted);
 
     const [isScoreShown, setScoreShown] = useState(false);
 
     const showResult = () => {
         setScoreShown(true);
-
-        //Все чекбоксы становятся неактивными
+        setIsClicked(true);
     }
 
     const restartQuiz = () => {
+        setIsClicked(false);
         dispatch(handleStartQuiz(false));
     }
 
     return (
         <>
             {
-                startQuiz.start_quiz && !isScoreShown
+                isGameStarted.is_game_started && !isScoreShown
                     && <button
                         type="button"
                         className="results"
@@ -41,7 +43,7 @@ const ResultsButton: React.FC<Props> = ({
                     </button>
             }
             {
-                !startQuiz.start_quiz || isScoreShown
+                !isGameStarted.is_game_started || isScoreShown
                     && (<div>
                             <p className="score">Верных:
                                 { userScore } из { totalQuestionsCount }
@@ -52,7 +54,7 @@ const ResultsButton: React.FC<Props> = ({
                     </div>)
             }
             {
-                startQuiz.start_quiz  && isScoreShown
+                isGameStarted.is_game_started  && isScoreShown
                     &&  <button onClick={ restartQuiz }>
                         Начать заново?
                     </button>

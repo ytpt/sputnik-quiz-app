@@ -1,7 +1,7 @@
-import { START_QUIZ } from "../actionsTypes";
+import { IS_GAME_STARTED } from "../actionsTypes";
 
 export interface IState {
-    start_quiz: boolean;
+    is_game_started: boolean;
 }
 
 interface IAction {
@@ -10,15 +10,15 @@ interface IAction {
 }
 
 const initialState: IState = {
-    start_quiz: false
+    is_game_started: false
 }
 
 const startQuizReducer = (state: IState = initialState, action: IAction) => {
     switch(action.type) {
-        case START_QUIZ:
+        case IS_GAME_STARTED:
             return {
                 ...state,
-                start_quiz: action.payload,
+                is_game_started: action.payload,
             }
         default:
             return state;

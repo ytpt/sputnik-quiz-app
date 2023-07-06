@@ -8,11 +8,12 @@ import StartButton from "./components/StartButton/StartButton";
 
 export const App = () => {
 
-    const startQuiz = useSelector((state: RootState) => state.startQuiz);
+    const isGameStarted = useSelector((state: RootState) => state.isGameStarted);
     const newQuestions = useSelector((state: RootState) => state.questions);
     const userScore = useSelector((state: RootState) => state.userScore);
 
     const [totalQuestionsCount, setTotalQuestionsCount] = useState(newQuestions.length);
+    const [isClicked, setIsClicked] = useState(false);
 
     // Нужно добавить пагинацию по 5 вопрсоов на страницу
     // const [pageNumber, setPageNumber] = useState(0);
@@ -23,7 +24,7 @@ export const App = () => {
             <Wrapper>
                 <h1>Квиз</h1>
                 {
-                    startQuiz.start_quiz
+                    isGameStarted.is_game_started
                         && newQuestions.map((question, index) => (
                             <QuestionCard
                                 key={ index }
@@ -34,17 +35,20 @@ export const App = () => {
                                     question.correct_answer
                                 ]}
                                 right={ question.correct_answer }
+                                isClicked={ isClicked }
+                                setIsClicked={ setIsClicked }
                             />
                         ))
                 }
                 {
-                    startQuiz.start_quiz
+                    isGameStarted.is_game_started
                         && <ResultsButton
                             userScore={ userScore.user_score }
                             totalQuestionsCount={ totalQuestionsCount }
+                            setIsClicked={ setIsClicked }
                         />
                 }
-                { !startQuiz.start_quiz && <StartButton value={ "Начать?" } /> }
+                { !isGameStarted.is_game_started && <StartButton value={ "Начать?" } /> }
             </Wrapper>
         </>
     )
