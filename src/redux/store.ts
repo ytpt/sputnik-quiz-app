@@ -10,7 +10,6 @@ const rootReducer = combineReducers({
     questions: questionReducer,
     isGameStarted: startQuizReducer,
     isCheckboxValid: checkboxReducer,
-
 })
 
 export type RootState = ReturnType<typeof rootReducer>;
