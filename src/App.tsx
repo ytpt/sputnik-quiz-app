@@ -15,8 +15,18 @@ export const App = () => {
     const [totalQuestionsCount, setTotalQuestionsCount] = useState(newQuestions.length);
     const [isClicked, setIsClicked] = useState(false);
 
-    // Нужно добавить пагинацию по 5 вопрсоов на страницу
-    // const [pageNumber, setPageNumber] = useState(0);
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(5);
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+
+    const handlePrevPage = () => {
+        setPage((prevPage) => prevPage - 1);
+    };
+
+    const handleNextPage = () => {
+        setPage((nextPage) => nextPage + 1);
+    };
 
     return (
         <>
@@ -25,20 +35,32 @@ export const App = () => {
                 <h1>Квиз</h1>
                 {
                     isGameStarted.is_game_started
-                        && newQuestions.map((question, index) => (
-                            <QuestionCard
-                                key={ index }
-                                questionNumber={ index }
-                                question={ question.question }
-                                answers={[
-                                    ...question.incorrect_answers,
-                                    question.correct_answer
-                                ]}
-                                right={ question.correct_answer }
-                                isClicked={ isClicked }
-                                setIsClicked={ setIsClicked }
-                            />
-                        ))
+                        && newQuestions
+                            .slice(startIndex, endIndex)
+                            .map((question, index) => (
+                                <QuestionCard
+                                    key={ index }
+                                    questionNumber={ index + startIndex }
+                                    question={ question.question }
+                                    answers={[
+                                        ...question.incorrect_answers,
+                                        question.correct_answer
+                                    ]}
+                                    right={ question.correct_answer }
+                                    isClicked={ isClicked }
+                                    setIsClicked={ setIsClicked }
+                                />
+                            ))
+                }
+                {
+                    isGameStarted.is_game_started && newQuestions.length > endIndex
+                        && <button onClick={ handleNextPage }>
+                            Следующая страница
+                        </button>
+                            || page > 1
+                                && <button onClick={ handlePrevPage }>
+                                    Назад
+                                </button>
                 }
                 {
                     isGameStarted.is_game_started
