@@ -1,6 +1,7 @@
-import React from "react";
+import React  from "react";
 import { Wrapper } from "./QuestionCard.styles";
 import ChkBox from "../ChkBox/ChkBox";
+import { shuffleArray } from "../../utils";
 
 type Props = {
     question: string;
@@ -22,6 +23,7 @@ const QuestionCard: React.FC<Props> = ({
 
     const renderAnswers = () => {
         const answersList = [];
+
         for (let answer in answers) {
             answersList.push(
                 <ChkBox
@@ -34,7 +36,9 @@ const QuestionCard: React.FC<Props> = ({
                 />
             );
         }
-        return answersList;
+        const newAnswerList = shuffleArray(answersList);
+        
+        return newAnswerList;
     };
 
     return (
