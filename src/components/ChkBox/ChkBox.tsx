@@ -16,11 +16,9 @@ const ChkBox: React.FC<Props> = ({
      label,
      right,
      isClicked,
-
 }) => {
 
     const dispatch = useDispatch();
-
     const checkAnswers = () => {
         variant === right && dispatch(handleUserScoreChange(1));
     };
