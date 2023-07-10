@@ -1,3 +1,5 @@
+import { shuffleArray } from "../../utils";
+
 export interface IQuestion {
     id: number;
     question: string;
@@ -118,7 +120,13 @@ export const initialState: IQuestions = [
 const questionReducer = (state: IQuestions = initialState, action: IAction) => {
     switch(action.type) {
         default:
-            return state;
+            return state.map((question: IQuestion) => ({
+                ...question,
+                answers: shuffleArray([
+                    ...question.incorrect_answers,
+                    question.correct_answer,
+                ]),
+            }));
     }
 }
 
