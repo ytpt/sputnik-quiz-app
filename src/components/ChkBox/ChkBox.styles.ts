@@ -8,14 +8,6 @@ export const Wrapper = styled.div`
         column-gap: 5px;
     }
     
-    input {
-        cursor: pointer;
-        user-select: none;
-        width: 25px;
-        height: 25px;
-        border: 3px solid #fff;
-    }
-    
     p {
         margin: 0;
     }
