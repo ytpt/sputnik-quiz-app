@@ -31,12 +31,18 @@ module.exports = {
             {
                 test: /\.(ttf|eot|woff|svg|woff2)$/,
                 loader: "file-loader"
-            }
-
+            },
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader'],
+            },
         ],
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.js']
+        alias: {
+            '~': path.resolve(__dirname, 'src')
+        },
+        extensions: ['.tsx', '.ts', '.js', '.css']
     },
     plugins: [
         new HtmlWebpackPlugin({
