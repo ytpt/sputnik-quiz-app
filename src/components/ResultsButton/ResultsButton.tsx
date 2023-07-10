@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { handleStartQuiz } from "../../redux/actions";
+import { handleStartQuiz, resetUserScore } from "../../redux/actions";
+import { Button } from "antd";
 
 type Props = {
     userScore: number;
@@ -28,19 +29,20 @@ const ResultsButton: React.FC<Props> = ({
     const restartQuiz = () => {
         setIsClicked(false);
         dispatch(handleStartQuiz(false));
+        dispatch(resetUserScore(0));
     }
 
     return (
         <>
             {
                 isGameStarted.is_game_started && !isScoreShown
-                    && <button
-                        type="button"
+                    && <Button
+                        type="primary"
                         className="results"
                         onClick={ showResult }
                     >
                             Узнать результат
-                    </button>
+                    </Button>
             }
             {
                 !isGameStarted.is_game_started || isScoreShown
@@ -55,9 +57,12 @@ const ResultsButton: React.FC<Props> = ({
             }
             {
                 isGameStarted.is_game_started  && isScoreShown
-                    &&  <button onClick={ restartQuiz }>
-                        Начать заново?
-                    </button>
+                    && <Button
+                            type="primary"
+                            onClick={ restartQuiz }
+                        >
+                            Начать заново?
+                        </Button>
             }
         </>
     )

@@ -1,7 +1,8 @@
 import React from "react";
 import { Wrapper } from "./ChkBox.styles";
 import { useDispatch } from "react-redux";
-import { handleUserScoreChange } from "../../redux/actions";
+import { addUserScore } from "../../redux/actions";
+import { Checkbox } from "antd";
 
 type Props = {
     variant: string;
@@ -9,6 +10,8 @@ type Props = {
     right: string;
     isClicked: boolean;
     setIsClicked: (boolean) => void;
+    selectedAnswer: string | null;
+    setSelectedAnswer: (answer: string) => void;
 }
 
 const ChkBox: React.FC<Props> = ({
@@ -16,21 +19,26 @@ const ChkBox: React.FC<Props> = ({
      label,
      right,
      isClicked,
+     selectedAnswer,
+     setSelectedAnswer,
 }) => {
 
     const dispatch = useDispatch();
+
     const checkAnswers = () => {
-        variant === right && dispatch(handleUserScoreChange(1));
+        variant === right && dispatch(addUserScore(1));
+        setSelectedAnswer(variant);
     };
 
     return (
         <Wrapper>
             <label>
-                <input
+                <Checkbox
                     type="checkbox"
                     onClick={ checkAnswers }
                     id={ variant }
                     disabled={ isClicked }
+                    checked={ selectedAnswer === variant }
                 />
                 <p>{ label }</p>
             </label>

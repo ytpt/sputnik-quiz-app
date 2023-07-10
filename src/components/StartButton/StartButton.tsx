@@ -1,6 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { handleStartQuiz, handleUserScoreChange } from "../../redux/actions";
+import { handleStartQuiz, resetUserScore } from "../../redux/actions";
+import { Button } from "antd";
 
 type Props = {
     value: string;
@@ -14,14 +15,14 @@ const StartButton: React.FC<Props> = ({
 
     const startNewGame = () => {
         dispatch(handleStartQuiz(true));
-        dispatch(handleUserScoreChange(0));
+        dispatch(resetUserScore(0));
     }
 
     return (
         <>
-            <button onClick={ startNewGame }>
+            <Button onClick={ startNewGame }>
                 { value }
-            </button>
+            </Button>
         </>
     )
 }
