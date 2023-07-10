@@ -1,7 +1,6 @@
-import React  from "react";
+import React, { useState } from "react";
 import { Wrapper } from "./QuestionCard.styles";
 import ChkBox from "../ChkBox/ChkBox";
-import { shuffleArray } from "../../utils";
 
 type Props = {
     question: string;
@@ -21,24 +20,21 @@ const QuestionCard: React.FC<Props> = ({
     setIsClicked,
 }) => {
 
-    const renderAnswers = () => {
-        const answersList = [];
+    const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
 
-        for (let answer in answers) {
-            answersList.push(
-                <ChkBox
-                    key={ answer }
-                    variant={ answers[answer] }
-                    label={ answers[answer] }
-                    right={ right }
-                    isClicked={ isClicked }
-                    setIsClicked={ setIsClicked }
-                />
-            );
-        }
-        const newAnswerList = shuffleArray(answersList);
-        
-        return newAnswerList;
+    const renderAnswers = () => {
+        return answers.map((answer) => (
+            <ChkBox
+                key={answer}
+                variant={answer}
+                label={answer}
+                right={right}
+                isClicked={isClicked}
+                setIsClicked={ setIsClicked }
+                setSelectedAnswer={setSelectedAnswer}
+                selectedAnswer={selectedAnswer}
+            />
+        ));
     };
 
     return (
