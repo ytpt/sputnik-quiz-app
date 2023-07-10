@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import QuestionCard from "./components/QuestionCard/QuestionCard";
+import 'antd/dist/reset.css';
 import { GlobalStyle, Wrapper } from "./App.styles";
 import { useSelector } from "react-redux";
 import ResultsButton from "./components/ResultsButton/ResultsButton";
 import { RootState } from "./redux/store";
 import StartButton from "./components/StartButton/StartButton";
+import PaginationButton from "./components/PaginationButton/PaginationButton";
+import QuestionsArray from "./components/QuestionsArray/QuestionsArray";
 
 export const App = () => {
 
@@ -33,34 +35,24 @@ export const App = () => {
             <GlobalStyle />
             <Wrapper>
                 <h1>Квиз</h1>
-                {
-                    isGameStarted.is_game_started
-                        && newQuestions
-                            .slice(startIndex, endIndex)
-                            .map((question, index) => (
-                                <QuestionCard
-                                    key={ index }
-                                    questionNumber={ index + startIndex }
-                                    question={ question.question }
-                                    answers={[
-                                        ...question.incorrect_answers,
-                                        question.correct_answer
-                                    ]}
-                                    right={ question.correct_answer }
-                                    isClicked={ isClicked }
-                                    setIsClicked={ setIsClicked }
-                                />
-                            ))
-                }
+                    <QuestionsArray
+                        newQuestions={ newQuestions }
+                        startIndex={ startIndex }
+                        endIndex={ endIndex }
+                        isClicked={ isClicked }
+                        setIsClicked={ setIsClicked }
+                    />
                 {
                     isGameStarted.is_game_started && newQuestions.length > endIndex
-                        && <button onClick={ handleNextPage }>
-                            Следующая страница
-                        </button>
-                            || page > 1
-                                && <button onClick={ handlePrevPage }>
-                                    Назад
-                                </button>
+                        && <PaginationButton
+                                onClick={ handleNextPage }
+                                value="Следующая страница"
+                            />
+                        || page > 1
+                            && <PaginationButton
+                                onClick={ handlePrevPage }
+                                value="Предыдущая страница"
+                            />
                 }
                 {
                     isGameStarted.is_game_started
