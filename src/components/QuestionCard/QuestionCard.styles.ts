@@ -20,16 +20,4 @@ export const ButtonWrapper = styled.div<ButtonWrapperProps>`
     flex-direction: row;
     column-gap: 5px;
     transition: all 0.3s ease;
-    
-    :hover {
-        opacity: 0.8;
-    }
-    
-    input {
-        cursor: pointer;
-        user-select: none;
-        width: 25px;
-        height: 25px;
-        border: 3px solid #fff;
-    }
 `;

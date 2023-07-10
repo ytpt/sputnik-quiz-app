@@ -17,14 +17,6 @@ export const GlobalStyle = createGlobalStyle`
         background-size: cover;
         color: white;
     }
-    
-    button {
-        cursor: pointer;
-        padding: 5px 10px;
-        margin-top: 5px;
-        border-radius: 10%;
-        border: none;
-    }
 `;
 
 export const Wrapper = styled.div`
