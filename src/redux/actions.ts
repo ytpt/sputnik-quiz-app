@@ -3,6 +3,8 @@ import {
     IS_CHECKBOX_VALID,
     ADD_USER_SCORE,
     RESET_USER_SCORE,
+    IS_USER_REG,
+    IS_USER_AUTH,
 } from "./actionsTypes";
 
 export const addUserScore = (payload: number) => ({
@@ -22,5 +24,15 @@ export const handleStartQuiz = (payload: boolean) => ({
 
 export const handleCheckboxChange = (payload: boolean) => ({
     type: IS_CHECKBOX_VALID,
+    payload: payload,
+});
+
+export const handleUserReg = (payload: boolean) => ({
+    type: IS_USER_REG,
+    payload: payload,
+});
+
+export const handleUserAuth = (payload: boolean) => ({
+    type: IS_USER_AUTH,
     payload: payload,
 });
