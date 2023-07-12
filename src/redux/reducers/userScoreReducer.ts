@@ -1,5 +1,4 @@
-import { ADD_USER_SCORE } from "../actionsTypes";
-import { RESET_USER_SCORE } from "../actionsTypes";
+import { ADD_USER_SCORE, RESET_USER_SCORE } from "../actionsTypes";
 
 export interface IState {
     user_score: number;
