@@ -1,26 +1,47 @@
-import React from "react";
+import React, {useState} from "react";
 import QuestionCard from "../QuestionCard/QuestionCard";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { shuffleArray } from "../../utils";
+import PaginationButton from "../PaginationButton/PaginationButton";
+import ResultsButton from "../ResultsButton/ResultsButton";
+import StartButton from "../StartButton/StartButton";
+import LogoutButton from "../LogoutButton/LogoutButton";
+import { handleStartQuiz, resetUserScore } from "../../redux/actions";
 
 type Props = {
     newQuestions: any;
-    startIndex: number;
-    endIndex: number;
     isClicked: boolean;
     setIsClicked: (boolean) => void;
 }
 
 const QuestionsArray: React.FC<Props> = ({
     newQuestions,
-    startIndex,
-    endIndex,
     isClicked,
     setIsClicked,
 }) => {
 
     const isGameStarted = useSelector((state: RootState) => state.isGameStarted);
+    const userScore = useSelector((state: RootState) => state.userScore);
+    const userAuthStatus = useSelector((state: RootState) => state.userStatus.user_auth);
+
+    const totalQuestionsCount = newQuestions.length;
+    const [page, setPage] = useState(1);
+    const limit = 5;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+
+    const dispatch = useDispatch();
+    dispatch(handleStartQuiz(true));
+    dispatch(resetUserScore(0));
+
+    const handlePrevPage = () => {
+        setPage((prevPage) => prevPage - 1);
+    };
+
+    const handleNextPage = () => {
+        setPage((nextPage) => nextPage + 1);
+    };
 
     const shuffledQuestions = newQuestions
         .slice(startIndex, endIndex)
@@ -51,6 +72,31 @@ const QuestionsArray: React.FC<Props> = ({
                         />
                     ))
             }
+            {
+                isGameStarted.is_game_started && newQuestions.length > endIndex
+                    && <PaginationButton
+                        onClick={ handleNextPage }
+                        value="Следующая страница"
+                    />
+                    || page > 1
+                        && <PaginationButton
+                            onClick={ handlePrevPage }
+                            value="Предыдущая страница"
+                        />
+            }
+            {
+                isGameStarted.is_game_started
+                    && <ResultsButton
+                        userScore={ userScore.user_score }
+                        totalQuestionsCount={ totalQuestionsCount }
+                        setIsClicked={ setIsClicked }
+                    />
+            }
+            {
+                !isGameStarted.is_game_started && userAuthStatus
+                && <StartButton value={ "Начать?" } />
+            }
+            { userAuthStatus && <LogoutButton value="Выход" /> }
         </>
     )
 };
