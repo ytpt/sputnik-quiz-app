@@ -1,62 +1,45 @@
 import React, { useState, FC }  from 'react';
-import { Button, Form, Input } from 'antd';
+import { Form, Input } from 'antd';
 import AuthService from "../../services/AuthService";
-import { IUser } from "../../models/response/IUser";
 import { useDispatch, useSelector } from "react-redux";
-import { handleUserAuth, handleUserReg } from "../../redux/actions";
+import { handleSetUser, handleUserAuth, handleUserReg } from "../../redux/actions";
 import { RootState } from "../../redux/store";
-
+import FormButton from "../FormButton/FormButton";
 
 const LoginForm: FC = () => {
+
+    const dispatch = useDispatch();
     const userRegStatus = useSelector((state: RootState) => state.userStatus.user_reg);
+
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-    const [user, setUser] = useState<IUser | null>(null);
-    const dispatch = useDispatch();
+    const [warnMessage, setWarnMessage] = useState<string>("");
 
-    const registration = async function(email: string, password: string) {
+    const performAuth = async (email: string, password: string, isRegistration: boolean) => {
         try {
-            const response = await AuthService.registration(email, password);
-            console.log(response);
-            localStorage.setItem("token", response.data.accessToken);
-            setUser(response.data.user);
-            dispatch(handleUserReg(true));
-        } catch(e) {
+            const response = isRegistration
+                ? await AuthService.registration(email, password)
+                : await AuthService.login(email, password);
+            localStorage.setItem('token', response.data.accessToken);
+            localStorage.setItem('login', response.data.user.email);
+            dispatch(
+                isRegistration
+                    ? handleUserReg(true)
+                    : handleUserAuth(true));
+            dispatch(handleSetUser(response.data.user));
+        } catch (e) {
             console.log(e.response?.data?.message);
+            setWarnMessage("Не получилось, попробуйте ещё раз!");
         }
     }
 
-    const login = async function(email: string, password: string) {
-        try {
-            const response = await AuthService.login(email, password);
-            console.log(response);
-            localStorage.setItem("token", response.data.accessToken);
-            setUser(response.data.user);
-            dispatch(handleUserAuth(true));
-        } catch(e) {
-            console.log(e.response?.data?.message);
-        }
+    const login = async (email: string, password: string) => {
+        await performAuth(email, password, false);
     }
 
-    const logout = async function() {
-        try {
-            const response = await AuthService.logout();
-            console.log(response);
-            localStorage.removeItem("token");
-            dispatch(handleUserAuth(false));
-            setUser({} as IUser);
-        } catch(e) {
-            console.log(e.response?.data?.message);
-        }
+    const registration = async (email: string, password: string) => {
+        await performAuth(email, password, true);
     }
-
-    const onFinish = (values: any) => {
-        console.log('Success:', values);
-    };
-
-    const onFinishFailed = (errorInfo: any) => {
-        console.log('Failed:', errorInfo);
-    };
 
     return (
         <Form
@@ -65,14 +48,13 @@ const LoginForm: FC = () => {
             wrapperCol={{ span: 16 }}
             style={{ maxWidth: 600 }}
             initialValues={{ remember: true }}
-            onFinish={ onFinish }
-            onFinishFailed={ onFinishFailed }
             autoComplete="off"
         >
             <Form.Item
                 label="E-mail"
                 name="email"
-                rules={[{ required: true, message: 'Введите e-mail!' }]}
+                rules={[{ required: true, message: 'Невалидный e-mail!', type: "email" }]}
+                hasFeedback
             >
                 <Input
                     type="text"
@@ -83,7 +65,8 @@ const LoginForm: FC = () => {
             <Form.Item
                 label="Пароль"
                 name="password"
-                rules={[{ required: true, message: 'Введите пароль!' }]}
+                rules={[{ required: true, message: 'Невалидный пароль!', whitespace: true, min: 3 }]}
+                hasFeedback
             >
                 <Input.Password
                     type="password"
@@ -91,25 +74,20 @@ const LoginForm: FC = () => {
                     onChange={ e => setPassword(e.target.value) }
                 />
             </Form.Item>
-            <Form.Item wrapperCol={{ offset: 5, span: 16 }}>
+            <Form.Item wrapperCol={{ offset: 0, span: 16 }}>
                 {
                     userRegStatus
-                        ? <Button
-                            type="primary"
-                            htmlType="submit"
+                        ? <FormButton
+                            value="Вход"
                             onClick={ () => login(email, password) }
-                        >
-                            Вход
-                        </Button>
-                        : <Button
-                            type="primary"
-                            htmlType="submit"
+                        />
+                        : <FormButton
+                            value="Регистрация"
                             onClick={ () => registration(email, password) }
-                        >
-                            Регистрация
-                        </Button>
+                        />
                 }
             </Form.Item>
+            { warnMessage }
         </Form>
     )
 }
