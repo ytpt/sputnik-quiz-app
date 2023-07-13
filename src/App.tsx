@@ -22,21 +22,19 @@ export const App = () => {
     const [isClicked, setIsClicked] = useState(false);
 
     useEffect(() => {
-        if (localStorage.getItem("token")) {
-            dispatch(handleUserReg(true));
+        localStorage.getItem("token") && dispatch(handleUserReg(true));
 
-            const checkAuth = async function() {
-                try {
-                    const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, { withCredentials: true })
-                    console.log(response);
-                    dispatch(handleUserAuth(true));
-                    dispatch(handleSetUser(response.data.user));
-                } catch(e) {
-                    console.log(e.response?.data?.message);
-                }
+        const checkAuth = async function() {
+            try {
+                const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, { withCredentials: true })
+                console.log(response);
+                dispatch(handleUserAuth(true));
+                dispatch(handleSetUser(response.data.user));
+            } catch(e) {
+                console.log(e.response?.data?.message);
             }
-            checkAuth();
         }
+        checkAuth();
     }, []);
 
     const openForm = () => {
@@ -55,7 +53,7 @@ export const App = () => {
                             isClicked={isClicked}
                             setIsClicked={setIsClicked}
                         />
-                        : userRegStatus || showForm
+                        : showForm || userRegStatus
                             ? <LoginForm />
                             : <Button onClick={ openForm }>
                                 Регистрация
