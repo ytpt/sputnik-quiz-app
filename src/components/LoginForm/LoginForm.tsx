@@ -27,6 +27,7 @@ const LoginForm: FC = () => {
                     ? handleUserReg(true)
                     : handleUserAuth(true));
             dispatch(handleSetUser(response.data.user));
+            setWarnMessage("Успешно!");
         } catch (e) {
             console.log(e.response?.data?.message);
             setWarnMessage("Не получилось, попробуйте ещё раз!");
