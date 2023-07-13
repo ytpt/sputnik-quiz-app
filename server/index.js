@@ -6,22 +6,15 @@ const mongoose = require("mongoose");
 const router = require("./router/index");
 const errorMiddleware = require("./middlewares/error-middleware");
 
-const corsOptions ={
-    origin: process.env.CLIENT_URL,
-    credentials: true,
-    optionSuccessStatus: 200,
-}
-
 const PORT = process.env.PORT || 5000;
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
-// app.use(cors({
-//     credentials: true,
-//     origin: process.env.CLIENT_URL,
-// }));
-app.use(cors(corsOptions))
+app.use(cors({
+    credentials: true,
+    origin: process.env.CLIENT_URL,
+}));
 app.use("/api", router);
 app.use(errorMiddleware);
 
