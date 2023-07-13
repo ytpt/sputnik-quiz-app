@@ -1,13 +1,12 @@
 import React, {useState} from "react";
 import QuestionCard from "../QuestionCard/QuestionCard";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { shuffleArray } from "../../utils";
 import PaginationButton from "../PaginationButton/PaginationButton";
 import ResultsButton from "../ResultsButton/ResultsButton";
 import StartButton from "../StartButton/StartButton";
 import LogoutButton from "../LogoutButton/LogoutButton";
-import { handleStartQuiz, resetUserScore } from "../../redux/actions";
 
 type Props = {
     newQuestions: any;
@@ -30,10 +29,6 @@ const QuestionsArray: React.FC<Props> = ({
     const limit = 5;
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
-
-    const dispatch = useDispatch();
-    dispatch(handleStartQuiz(true));
-    dispatch(resetUserScore(0));
 
     const handlePrevPage = () => {
         setPage((prevPage) => prevPage - 1);
