@@ -1,36 +1,47 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import 'antd/dist/reset.css';
+import { Button } from "antd";
 import { GlobalStyle, Wrapper } from "./App.styles";
-import { useSelector } from "react-redux";
-import ResultsButton from "./components/ResultsButton/ResultsButton";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./redux/store";
-import StartButton from "./components/StartButton/StartButton";
-import PaginationButton from "./components/PaginationButton/PaginationButton";
 import QuestionsArray from "./components/QuestionsArray/QuestionsArray";
 import LoginForm from "./components/LoginForm/LoginForm";
+import { handleShowForm, handleUserReg } from "./redux/actions";
+import axios from "axios";
+import { AuthResponse } from "./models/response/AuthResponse";
+import { API_URL } from "./http";
+import { handleSetUser, handleUserAuth } from "./redux/actions";
 
 export const App = () => {
 
-    const isGameStarted = useSelector((state: RootState) => state.isGameStarted);
+    const dispatch = useDispatch();
     const newQuestions = useSelector((state: RootState) => state.questions);
-    const userScore = useSelector((state: RootState) => state.userScore);
     const userAuthStatus = useSelector((state: RootState) => state.userStatus.user_auth);
-
-    const totalQuestionsCount = newQuestions.length;
+    const showForm = useSelector((state: RootState) => state.showForm.showForm);
+    const userRegStatus = useSelector((state: RootState) => state.userStatus.user_reg);
     const [isClicked, setIsClicked] = useState(false);
 
-    const [page, setPage] = useState(1);
-    const limit = 5;
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
+    useEffect(() => {
+        if (localStorage.getItem("token")) {
+            dispatch(handleUserReg(true));
 
-    const handlePrevPage = () => {
-        setPage((prevPage) => prevPage - 1);
-    };
+            const checkAuth = async function() {
+                try {
+                    const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, { withCredentials: true })
+                    console.log(response);
+                    dispatch(handleUserAuth(true));
+                    dispatch(handleSetUser(response.data.user));
+                } catch(e) {
+                    console.log(e.response?.data?.message);
+                }
+            }
+            checkAuth();
+        }
+    }, []);
 
-    const handleNextPage = () => {
-        setPage((nextPage) => nextPage + 1);
-    };
+    const openForm = () => {
+        dispatch(handleShowForm(true));
+    }
 
     return (
         <>
@@ -38,38 +49,17 @@ export const App = () => {
             <Wrapper>
                 <h1>Квиз</h1>
                 {
-                    !userAuthStatus
-                        ? <LoginForm/>
-                        : <QuestionsArray
-                            newQuestions={ newQuestions }
-                            startIndex={ startIndex }
-                            endIndex={ endIndex }
-                            isClicked={ isClicked }
-                            setIsClicked={ setIsClicked }
+                    userAuthStatus
+                        ? <QuestionsArray
+                            newQuestions={newQuestions}
+                            isClicked={isClicked}
+                            setIsClicked={setIsClicked}
                         />
-                }
-                {
-                    isGameStarted.is_game_started && newQuestions.length > endIndex
-                        && <PaginationButton
-                                onClick={ handleNextPage }
-                                value="Следующая страница"
-                            />
-                        || page > 1
-                            && <PaginationButton
-                                onClick={ handlePrevPage }
-                                value="Предыдущая страница"
-                            />
-                }
-                {
-                    isGameStarted.is_game_started
-                        && <ResultsButton
-                            userScore={ userScore.user_score }
-                            totalQuestionsCount={ totalQuestionsCount }
-                            setIsClicked={ setIsClicked }
-                        />
-                }
-                { !isGameStarted.is_game_started && userAuthStatus
-                    && <StartButton value={ "Начать?" } />
+                        : userRegStatus || showForm
+                            ? <LoginForm />
+                            : <Button onClick={ openForm }>
+                                Регистрация
+                            </Button>
                 }
             </Wrapper>
         </>
