@@ -1,12 +1,12 @@
-import React, {useState} from "react";
+import React, { useEffect, useState } from "react";
 import QuestionCard from "../QuestionCard/QuestionCard";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { shuffleArray } from "../../utils";
 import PaginationButton from "../PaginationButton/PaginationButton";
 import ResultsButton from "../ResultsButton/ResultsButton";
-import StartButton from "../StartButton/StartButton";
 import LogoutButton from "../LogoutButton/LogoutButton";
+import { handleStartQuiz, resetUserScore} from "../../redux/actions";
 
 type Props = {
     newQuestions: any;
@@ -20,9 +20,18 @@ const QuestionsArray: React.FC<Props> = ({
     setIsClicked,
 }) => {
 
-    const isGameStarted = useSelector((state: RootState) => state.isGameStarted);
     const userScore = useSelector((state: RootState) => state.userScore);
     const userAuthStatus = useSelector((state: RootState) => state.userStatus.user_auth);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        const startNewGame = () => {
+            dispatch(handleStartQuiz(true));
+            dispatch(resetUserScore(0));
+        }
+        startNewGame();
+    }, []);
 
     const totalQuestionsCount = newQuestions.length;
     const [page, setPage] = useState(1);
@@ -51,7 +60,7 @@ const QuestionsArray: React.FC<Props> = ({
     return (
         <>
             {
-                isGameStarted.is_game_started
+                userAuthStatus
                     && shuffledQuestions.map((question, index) => (
                         <QuestionCard
                             key={ index }
@@ -68,7 +77,7 @@ const QuestionsArray: React.FC<Props> = ({
                     ))
             }
             {
-                isGameStarted.is_game_started && newQuestions.length > endIndex
+                userAuthStatus && newQuestions.length > endIndex
                     && <PaginationButton
                         onClick={ handleNextPage }
                         value="Следующая страница"
@@ -80,16 +89,12 @@ const QuestionsArray: React.FC<Props> = ({
                         />
             }
             {
-                isGameStarted.is_game_started
+                userAuthStatus
                     && <ResultsButton
                         userScore={ userScore.user_score }
                         totalQuestionsCount={ totalQuestionsCount }
                         setIsClicked={ setIsClicked }
                     />
-            }
-            {
-                !isGameStarted.is_game_started && userAuthStatus
-                && <StartButton value={ "Начать?" } />
             }
             { userAuthStatus && <LogoutButton value="Выход" /> }
         </>
