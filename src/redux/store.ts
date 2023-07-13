@@ -5,6 +5,8 @@ import questionReducer from "./reducers/questionsReducer";
 import startQuizReducer from "./reducers/startQuizReducer";
 import checkboxReducer from "./reducers/checkboxReducer";
 import userStatusReducer from "./reducers/userStatusReducer";
+import setUserReducer from "./reducers/setUserReducer";
+import showFormReducer from "./reducers/showFormReducer";
 
 const rootReducer = combineReducers({
     userScore: userScoreReducer,
@@ -12,6 +14,8 @@ const rootReducer = combineReducers({
     isGameStarted: startQuizReducer,
     isCheckboxValid: checkboxReducer,
     userStatus: userStatusReducer,
+    setUser: setUserReducer,
+    showForm: showFormReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>;
