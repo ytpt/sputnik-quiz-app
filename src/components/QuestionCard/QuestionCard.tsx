@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Wrapper } from "./QuestionCard.styles";
 import ChkBox from "../ChkBox/ChkBox";
 
@@ -9,6 +9,9 @@ type Props = {
     right: string;
     isClicked: boolean;
     setIsClicked: (boolean) => void;
+    isTimeExpired: boolean;
+    selectedAnswer: string | null;
+    setSelectedAnswer: (answer: string) => void;
 }
 
 const QuestionCard: React.FC<Props> = ({
@@ -18,9 +21,11 @@ const QuestionCard: React.FC<Props> = ({
     right,
     isClicked,
     setIsClicked,
-}) => {
+    isTimeExpired,
+    selectedAnswer,
+    setSelectedAnswer,
 
-    const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+}) => {
 
     const renderAnswers = () => {
         return answers.map((answer) => (
@@ -31,8 +36,9 @@ const QuestionCard: React.FC<Props> = ({
                 right={right}
                 isClicked={isClicked}
                 setIsClicked={ setIsClicked }
-                setSelectedAnswer={setSelectedAnswer}
-                selectedAnswer={selectedAnswer}
+                selectedAnswer={ selectedAnswer }
+                setSelectedAnswer={ setSelectedAnswer }
+                isTimeExpired={ isTimeExpired }
             />
         ));
     };
