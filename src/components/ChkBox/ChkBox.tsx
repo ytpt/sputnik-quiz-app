@@ -12,6 +12,7 @@ type Props = {
     setIsClicked: (boolean) => void;
     selectedAnswer: string | null;
     setSelectedAnswer: (answer: string) => void;
+    isTimeExpired: boolean;
 }
 
 const ChkBox: React.FC<Props> = ({
@@ -21,6 +22,7 @@ const ChkBox: React.FC<Props> = ({
      isClicked,
      selectedAnswer,
      setSelectedAnswer,
+     isTimeExpired,
 }) => {
 
     const dispatch = useDispatch();
@@ -37,7 +39,7 @@ const ChkBox: React.FC<Props> = ({
                     type="checkbox"
                     onClick={ checkAnswers }
                     id={ variant }
-                    disabled={ isClicked }
+                    disabled={ isClicked || isTimeExpired }
                     checked={ selectedAnswer === variant }
                 />
                 <p>{ label }</p>
