@@ -6,3 +6,5 @@ export const IS_USER_REG = "IS_USER_REG";
 export const IS_USER_AUTH = "IS_USER_AUTH";
 export const SET_USER = "SET_USER";
 export const SHOW_FORM = "SHOW_FORM";
+export const IS_TIMER_ACTIVE = "IS_TIMER_ACTIVE";
+export const IS_SCORE_SHOWN = "IS_SCORE_SHOWN";

@@ -1,6 +1,6 @@
 import { IS_GAME_STARTED, IS_CHECKBOX_VALID, ADD_USER_SCORE,
     RESET_USER_SCORE, IS_USER_REG, IS_USER_AUTH, SET_USER,
-    SHOW_FORM } from "./actionsTypes";
+    SHOW_FORM,IS_TIMER_ACTIVE, IS_SCORE_SHOWN } from "./actionsTypes";
 import { IUser } from "../models/response/IUser";
 
 export const addUserScore = (payload: number) => ({
@@ -40,5 +40,15 @@ export const handleSetUser = (payload: IUser | null) => ({
 
 export const handleShowForm = (payload: boolean) => ({
     type: SHOW_FORM,
+    payload: payload,
+});
+
+export const handleTimerActive = (payload: boolean) => ({
+    type: IS_TIMER_ACTIVE,
+    payload: payload,
+});
+
+export const handleScoreShown = (payload: boolean) => ({
+    type: IS_SCORE_SHOWN,
     payload: payload,
 });
