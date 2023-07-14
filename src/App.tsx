@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import 'antd/dist/reset.css';
 import { Button } from "antd";
 import { GlobalStyle, Wrapper } from "./App.styles";
@@ -19,22 +19,23 @@ export const App = () => {
     const userAuthStatus = useSelector((state: RootState) => state.userStatus.user_auth);
     const showForm = useSelector((state: RootState) => state.showForm.showForm);
     const userRegStatus = useSelector((state: RootState) => state.userStatus.user_reg);
-    const [isClicked, setIsClicked] = useState(false);
 
     useEffect(() => {
-        localStorage.getItem("token") && dispatch(handleUserReg(true));
+        if (localStorage.getItem("token")) {
+            dispatch(handleUserReg(true));
 
-        const checkAuth = async function() {
-            try {
-                const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, { withCredentials: true })
-                console.log(response);
-                dispatch(handleUserAuth(true));
-                dispatch(handleSetUser(response.data.user));
-            } catch(e) {
-                console.log(e.response?.data?.message);
+            const checkAuth = async function() {
+                try {
+                    const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, { withCredentials: true })
+                    console.log(response);
+                    dispatch(handleUserAuth(true));
+                    dispatch(handleSetUser(response.data.user));
+                } catch(e) {
+                    console.log(e.response?.data?.message);
+                }
             }
+            checkAuth();
         }
-        checkAuth();
     }, []);
 
     const openForm = () => {
@@ -49,9 +50,7 @@ export const App = () => {
                 {
                     userAuthStatus
                         ? <QuestionsArray
-                            newQuestions={newQuestions}
-                            isClicked={isClicked}
-                            setIsClicked={setIsClicked}
+                            newQuestions={ newQuestions }
                         />
                         : showForm || userRegStatus
                             ? <LoginForm />
