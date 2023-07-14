@@ -1,31 +1,29 @@
 import React from "react";
 import { Wrapper } from "./ChkBox.styles";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addUserScore } from "../../redux/actions";
 import { Checkbox } from "antd";
+import { RootState } from "../../redux/store";
 
 type Props = {
     variant: string;
     label: string;
     right: string;
-    isClicked: boolean;
-    setIsClicked: (boolean) => void;
     selectedAnswer: string | null;
     setSelectedAnswer: (answer: string) => void;
-    isTimeExpired: boolean;
 }
 
 const ChkBox: React.FC<Props> = ({
      variant,
      label,
      right,
-     isClicked,
      selectedAnswer,
      setSelectedAnswer,
-     isTimeExpired,
 }) => {
 
     const dispatch = useDispatch();
+    const isTimeExpired = useSelector((state: RootState) => state.isTimeExpired.is_timer_expired);
+    const isCheckboxClicked = useSelector((state: RootState) => state.isCheckboxClicked.is_checkbox_clicked);
 
     const checkAnswers = () => {
         variant === right && dispatch(addUserScore(1));
@@ -39,7 +37,7 @@ const ChkBox: React.FC<Props> = ({
                     type="checkbox"
                     onClick={ checkAnswers }
                     id={ variant }
-                    disabled={ isClicked || isTimeExpired }
+                    disabled={ isCheckboxClicked || isTimeExpired }
                     checked={ selectedAnswer === variant }
                 />
                 <p>{ label }</p>

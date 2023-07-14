@@ -1,8 +1,8 @@
-import React, { useState, FC }  from 'react';
-import { Form, Input } from 'antd';
+import React, { useState, FC }  from "react";
+import { Form, Input } from "antd";
 import AuthService from "../../services/AuthService";
 import { useDispatch, useSelector } from "react-redux";
-import { handleSetUser, handleUserAuth, handleUserReg } from "../../redux/actions";
+import { handleErrorMessage, handleSetUser, handleUserAuth, handleUserReg } from "../../redux/actions";
 import { RootState } from "../../redux/store";
 import FormButton from "../FormButton/FormButton";
 
@@ -10,10 +10,10 @@ const LoginForm: FC = () => {
 
     const dispatch = useDispatch();
     const userRegStatus = useSelector((state: RootState) => state.userStatus.user_reg);
+    const errorMessage = useSelector((state: RootState) => state.errorMessage.error_message);
 
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-    const [warnMessage, setWarnMessage] = useState<string>("");
 
     const performAuth = async (email: string, password: string, isRegistration: boolean) => {
         try {
@@ -22,15 +22,11 @@ const LoginForm: FC = () => {
                 : await AuthService.login(email, password);
             localStorage.setItem('token', response.data.accessToken);
             localStorage.setItem('login', response.data.user.email);
-            dispatch(
-                isRegistration
-                    ? handleUserReg(true)
-                    : handleUserAuth(true));
+            dispatch(isRegistration ? handleUserReg(true) : handleUserAuth(true));
             dispatch(handleSetUser(response.data.user));
-            setWarnMessage("Успешно!");
+            dispatch(handleErrorMessage("Успешно"));
         } catch (e) {
-            console.log(e.response?.data?.message);
-            setWarnMessage("Не получилось, попробуйте ещё раз!");
+            dispatch(handleErrorMessage("Не получилось, попробуйте ещё раз!"));
         }
     }
 
@@ -88,7 +84,7 @@ const LoginForm: FC = () => {
                         />
                 }
             </Form.Item>
-            { warnMessage }
+            { errorMessage }
         </Form>
     )
 }

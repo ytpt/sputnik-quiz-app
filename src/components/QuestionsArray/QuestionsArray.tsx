@@ -6,10 +6,11 @@ import { shuffleArray } from "../../utils";
 import PaginationButton from "../PaginationButton/PaginationButton";
 import Results from "../Results/Results";
 import LogoutButton from "../LogoutButton/LogoutButton";
-import { handleScoreShown, handleStartQuiz, handleTimerActive, resetUserScore } from "../../redux/actions";
+import { handleCheckboxClicked, handleScoreShown, handleStartQuiz, handleTimeExpired, handleTimerActive, resetUserScore } from "../../redux/actions";
+import { IQuestion } from "../../redux/reducers/questionsReducer";
 
 type Props = {
-    newQuestions: any;
+    newQuestions: IQuestion[];
 }
 
 type SelectedAnswers = {
@@ -21,27 +22,26 @@ const QuestionsArray: FC<Props> = ({
 }) => {
 
     const dispatch = useDispatch();
-    const userScore = useSelector((state: RootState) => state.userScore);
+    const userScore = useSelector((state: RootState) => state.userScore.user_score);
     const userAuthStatus = useSelector((state: RootState) => state.userStatus.user_auth);
     const isGameStarted = useSelector((state: RootState) => state.isGameStarted.is_game_started);
     const activeTimer = useSelector((state: RootState) => state.isTimerActive.is_timer_active);
     const isScoreShown = useSelector((state: RootState) => state.isScoreShown.is_score_shown);
 
     const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswers>({});
-    const [isTimeExpired, setIsTimeExpired] = useState(false);
-    const [isClicked, setIsClicked] = useState(false);
+
     const totalQuestionsCount = newQuestions.length;
     const [page, setPage] = useState(1);
     const limit = 5, startIndex = (page - 1) * limit, endIndex = startIndex + limit;
 
     const startNewGame = () => {
-        setIsClicked(false);
-        setIsTimeExpired(false);
         setSelectedAnswers({});
         dispatch(resetUserScore(0));
+        dispatch(handleCheckboxClicked(false));
         dispatch(handleStartQuiz(true));
         dispatch(handleTimerActive(true));
         dispatch(handleScoreShown(false));
+        dispatch(handleTimeExpired(false));
         timer();
     }
 
@@ -49,13 +49,8 @@ const QuestionsArray: FC<Props> = ({
         startNewGame();
     }, []);
 
-    const handlePrevPage = () => {
-        setPage((prevPage) => prevPage - 1);
-    };
-
-    const handleNextPage = () => {
-        setPage((nextPage) => nextPage + 1);
-    };
+    const handlePrevPage = () => setPage((prevPage) => prevPage - 1);
+    const handleNextPage = () => setPage((nextPage) => nextPage + 1);
 
     const shuffledQuestions = newQuestions
         .slice(startIndex, endIndex)
@@ -76,13 +71,12 @@ const QuestionsArray: FC<Props> = ({
 
        interval = setInterval(() => {
            seconds--;
-           console.log(seconds);
 
            if (!seconds) {
                clearInterval(interval);
                dispatch(handleTimerActive(false));
                dispatch(handleScoreShown(true));
-               setIsTimeExpired(true);
+               dispatch(handleTimeExpired(true));
                alert("Время вышло :(");
            }
        }, 1000);
@@ -105,14 +99,8 @@ const QuestionsArray: FC<Props> = ({
                             key={ index }
                             questionNumber={ index + startIndex }
                             question={ question.question }
-                            answers={[
-                                ...question.incorrect_answers,
-                                question.correct_answer
-                            ]}
+                            answers={ [...question.incorrect_answers, question.correct_answer] }
                             right={ question.correct_answer }
-                            isClicked={ isClicked }
-                            setIsClicked={ setIsClicked }
-                            isTimeExpired={ isTimeExpired }
                             selectedAnswer={ selectedAnswers[index + startIndex] || null }
                             setSelectedAnswer={ (answer) => handleSelectAnswer(index + startIndex, answer) }
                         />
@@ -129,15 +117,13 @@ const QuestionsArray: FC<Props> = ({
             {
                 isGameStarted && !activeTimer
                     && <Results
-                            userScore={ userScore.user_score }
+                            userScore={ userScore }
                             totalQuestionsCount={ totalQuestionsCount }
                             startNewGame={ startNewGame }
                     />
             }
             {/*Logout*/}
-            {
-                isGameStarted && userAuthStatus && <LogoutButton value="Выход" />
-            }
+            { isGameStarted && userAuthStatus && <LogoutButton value="Выход" /> }
         </>
     )
 };

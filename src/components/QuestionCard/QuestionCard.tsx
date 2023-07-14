@@ -7,9 +7,6 @@ type Props = {
     answers: string[];
     questionNumber: number;
     right: string;
-    isClicked: boolean;
-    setIsClicked: (boolean) => void;
-    isTimeExpired: boolean;
     selectedAnswer: string | null;
     setSelectedAnswer: (answer: string) => void;
 }
@@ -19,28 +16,24 @@ const QuestionCard: React.FC<Props> = ({
     answers,
     questionNumber,
     right,
-    isClicked,
-    setIsClicked,
-    isTimeExpired,
     selectedAnswer,
     setSelectedAnswer,
 
 }) => {
 
     const renderAnswers = () => {
-        return answers.map((answer) => (
-            <ChkBox
-                key={answer}
-                variant={answer}
-                label={answer}
-                right={right}
-                isClicked={isClicked}
-                setIsClicked={ setIsClicked }
-                selectedAnswer={ selectedAnswer }
-                setSelectedAnswer={ setSelectedAnswer }
-                isTimeExpired={ isTimeExpired }
-            />
-        ));
+        if (answers) {
+            return answers.map((answer) => (
+                <ChkBox
+                    key={ answer }
+                    variant={ answer }
+                    label={ answer }
+                    right={ right }
+                    selectedAnswer={ selectedAnswer }
+                    setSelectedAnswer={ setSelectedAnswer }
+                />
+            ));
+        }
     };
 
     return (
