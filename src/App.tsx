@@ -7,10 +7,8 @@ import { RootState } from "./redux/store";
 import QuestionsArray from "./components/QuestionsArray/QuestionsArray";
 import LoginForm from "./components/LoginForm/LoginForm";
 import { handleErrorMessage, handleShowForm, handleUserReg } from "./redux/actions";
-import axios from "axios";
-import { AuthResponse } from "./models/response/AuthResponse";
-import { API_URL } from "./http";
 import { handleSetUser, handleUserAuth } from "./redux/actions";
+import AuthService from "./services/AuthService";
 
 export const App = () => {
 
@@ -19,23 +17,22 @@ export const App = () => {
     const userAuthStatus = useSelector((state: RootState) => state.userStatus.user_auth);
     const showForm = useSelector((state: RootState) => state.showForm.showForm);
     const isUserReg = useSelector((state: RootState) => state.userStatus.user_reg);
+    const errorMessage = useSelector((state: RootState) => state.errorMessage.error_message);
 
     useEffect(() => {
-        if (localStorage.getItem("token")) {
-            dispatch(handleUserReg(true));
-
-            const checkAuth = async function() {
-                try {
-                    const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, { withCredentials: true })
-                    dispatch(handleUserAuth(true));
-                    dispatch(handleSetUser(response.data.user));
-                } catch(e) {
-                    dispatch(handleErrorMessage(e.response?.data?.message));
-                }
-            }
-            checkAuth();
-        }
+        checkAuth();
     }, []);
+
+    const checkAuth = async () => {
+        localStorage.getItem("token") && dispatch(handleUserReg(true));
+        try {
+            const response = await AuthService.checkAuth();
+            dispatch(handleUserAuth(true));
+            dispatch(handleSetUser(response.data.user));
+        } catch (e) {
+            dispatch(handleErrorMessage(e.response?.data?.message));
+        }
+    }
 
     const openForm = () => dispatch(handleShowForm(true));
 
@@ -55,6 +52,7 @@ export const App = () => {
                                 Регистрация
                             </Button>
                 }
+                { errorMessage }
             </Wrapper>
         </>
     )
