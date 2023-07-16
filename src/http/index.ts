@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { AuthResponse } from "../models/response/AuthResponse";
+import { handleErrorMessage } from "../redux/actions";
+import { useDispatch } from "react-redux";
 
 export const API_URL = `http://localhost:5000/api`;
-
 export const $api = axios.create({
     withCredentials: true,
     baseURL: API_URL,
@@ -24,7 +25,8 @@ $api.interceptors.response.use((config) => {
             localStorage.setItem('token', response.data.accessToken);
             return $api.request(originalRequest);
         } catch (e) {
-            console.log('Пользователь не авторизован')
+            const dispatch = useDispatch();
+            dispatch(handleErrorMessage('Пользователь не авторизован'));
         }
     }
     throw error;
