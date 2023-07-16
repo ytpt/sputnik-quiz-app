@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC } from "react";
 import { Wrapper } from "./QuestionCard.styles";
 import ChkBox from "../ChkBox/ChkBox";
 
@@ -11,21 +11,20 @@ type Props = {
     setSelectedAnswer: (answer: string) => void;
 }
 
-const QuestionCard: React.FC<Props> = ({
+const QuestionCard: FC<Props> = ({
     question,
     answers,
     questionNumber,
     right,
     selectedAnswer,
     setSelectedAnswer,
-
 }) => {
 
     const renderAnswers = () => {
         if (answers) {
-            return answers.map((answer) => (
+            return answers.map((answer, index) => (
                 <ChkBox
-                    key={ answer }
+                    key={ `${questionNumber}_${index}` }
                     variant={ answer }
                     label={ answer }
                     right={ right }
