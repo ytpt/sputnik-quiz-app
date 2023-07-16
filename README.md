@@ -1,12 +1,12 @@
-# sputnik-quiz-app
-The quiz app starts with button "Регистрация".\
-After registration you need to login.\
-After login the quiz starts.
+# sputnik-quiz-second-week
+The quiz app starts with the button "Регистрация".\
+After the registration you need to login.\
+After the login the quiz starts.
 
 # Getting Started
 
-You can run: 
-### `npm i sputnik-quiz`
+To clone quiz run in terminal: 
+### `git clone https://github.com/ytpt/sputnik-quiz-second-week.git`
 
 
 ## Install libraries
@@ -21,17 +21,17 @@ To install libraries for frontend connection run in new terminal:
 ### `npm install`
 
 
-## .env.example file
-The project has .env.example file in server folder
+## .env file
+The project has .env file in server folder
 
-Before you start the quiz add:
+Before you start the quiz add your:
 - backend port №
 - secret key for access
 - secret key for refresh
 - backend localhost
 - frontend localhost
 
-You may use examples giving in comments
+You may use examples giving in .env file
 
 
 ## Run project
