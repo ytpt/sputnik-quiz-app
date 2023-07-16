@@ -1,9 +1,10 @@
 import React, { FC } from "react";
-import { useDispatch } from "react-redux";
-import { handleSetUser, handleTimerActive, handleUserAuth } from "../../redux/actions";
+import { useDispatch, useSelector } from "react-redux";
+import { handleErrorMessage, handleSetUser, handleTimerActive, handleUserAuth } from "../../redux/actions";
 import { Button } from "antd";
 import AuthService from "../../services/AuthService";
 import { IUser } from "../../models/response/IUser";
+import { RootState } from "../../redux/store";
 
 type Props = {
     value: string;
@@ -14,17 +15,18 @@ const LogoutButton: FC<Props> = ({
 }) => {
 
     const dispatch = useDispatch();
+    const errorMessage = useSelector((state: RootState) => state.errorMessage.error_message);
+
     const logout = async function() {
         try {
             const response = await AuthService.logout();
-            console.log(response);
             localStorage.removeItem("token");
             localStorage.removeItem("login");
             dispatch(handleUserAuth(false));
             dispatch(handleSetUser({} as IUser));
             dispatch(handleTimerActive(false));
         } catch(e) {
-            console.log(e.response?.data?.message);
+            dispatch(handleErrorMessage(e.response?.data?.message));
         }
     }
 
@@ -33,6 +35,7 @@ const LogoutButton: FC<Props> = ({
             <Button onClick={ logout }>
                 { value }
             </Button>
+            { errorMessage }
         </>
     )
 }
