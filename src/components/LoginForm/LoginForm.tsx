@@ -5,13 +5,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { handleErrorMessage, handleSetUser, handleUserAuth, handleUserReg } from "../../redux/actions";
 import { RootState } from "../../redux/store";
 import FormButton from "../FormButton/FormButton";
+import { FormInstance } from "antd";
 
-const LoginForm: FC = () => {
+type Props = {};
+
+const LoginForm: FC<Props> = () => {
 
     const dispatch = useDispatch();
     const userRegStatus = useSelector((state: RootState) => state.userStatus.user_reg);
-    const errorMessage = useSelector((state: RootState) => state.errorMessage.error_message);
 
+    const [form] = Form.useForm<FormInstance>();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
 
@@ -30,28 +33,31 @@ const LoginForm: FC = () => {
         }
     }
 
-    const login = async (email: string, password: string) => {
-        await performAuth(email, password, false);
-    }
-
-    const registration = async (email: string, password: string) => {
-        await performAuth(email, password, true);
+    const formValidation = async (values: any) => {
+        userRegStatus
+            ? await performAuth(values.email, values.password, false)
+            : await performAuth(values.email, values.password, true)
     }
 
     return (
         <Form
+            form={ form }
             name="basic"
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
             style={{ maxWidth: 600 }}
             initialValues={{ remember: true }}
             autoComplete="off"
+            onFinish={ formValidation }
         >
             <Form.Item
                 label="E-mail"
                 name="email"
-                rules={[{ required: true, message: 'Невалидный e-mail!', type: "email" }]}
                 hasFeedback
+                rules={[
+                    { required: true, message: "Введите e-mail!"  },
+                    { type: "email", message: "Невалидный e-mail" },
+                ]}
             >
                 <Input
                     type="text"
@@ -62,8 +68,12 @@ const LoginForm: FC = () => {
             <Form.Item
                 label="Пароль"
                 name="password"
-                rules={[{ required: true, message: 'Невалидный пароль!', whitespace: true, min: 3 }]}
                 hasFeedback
+                rules={[
+                    { required: true, message: "Введите пароль!" },
+                    { whitespace: true, message: "Пароль не должен содержать пробелы!" },
+                    { min: 3, message: "Пароль должен содержать не менее 3 символов!" },
+                ]}
             >
                 <Input.Password
                     type="password"
@@ -72,19 +82,16 @@ const LoginForm: FC = () => {
                 />
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 0, span: 16 }}>
-                {
-                    userRegStatus
-                        ? <FormButton
-                            value="Вход"
-                            onClick={ () => login(email, password) }
-                        />
-                        : <FormButton
-                            value="Регистрация"
-                            onClick={ () => registration(email, password) }
-                        />
-                }
+                <FormButton
+                    value={ userRegStatus ? "Вход" : "Регистрация" }
+                    onClick={ form.submit }
+                    disabled={
+                        !form.isFieldsTouched(true)
+                            || form.getFieldsError()
+                                .filter(({ errors }) => errors.length).length > 0
+                    }
+                />
             </Form.Item>
-            { errorMessage }
         </Form>
     )
 }
