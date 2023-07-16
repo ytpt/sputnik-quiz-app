@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC } from "react";
 import { Wrapper } from "./ChkBox.styles";
 import { useDispatch, useSelector } from "react-redux";
 import { addUserScore } from "../../redux/actions";
@@ -13,7 +13,7 @@ type Props = {
     setSelectedAnswer: (answer: string) => void;
 }
 
-const ChkBox: React.FC<Props> = ({
+const ChkBox: FC<Props> = ({
      variant,
      label,
      right,

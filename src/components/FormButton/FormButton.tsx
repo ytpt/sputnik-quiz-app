@@ -1,14 +1,16 @@
-import React from "react";
+import React, { FC } from "react";
 import { Button } from "antd";
 
 type Props = {
     value: string;
     onClick: () => void;
+    disabled: boolean;
 }
 
-const FormButton: React.FC<Props> = ({
+const FormButton: FC<Props> = ({
     value,
     onClick,
+    disabled,
 }) => {
 
     return (
@@ -16,6 +18,7 @@ const FormButton: React.FC<Props> = ({
             type="primary"
             htmlType="submit"
             onClick={ onClick }
+            disabled={ disabled }
         >
             { value }
         </Button>
