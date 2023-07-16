@@ -34,6 +34,10 @@ const QuestionsArray: FC<Props> = ({
     const [page, setPage] = useState(1);
     const limit = 5, startIndex = (page - 1) * limit, endIndex = startIndex + limit;
 
+    useEffect(() => {
+        startNewGame();
+    }, []);
+
     const startNewGame = () => {
         setSelectedAnswers({});
         dispatch(resetUserScore(0));
@@ -44,10 +48,6 @@ const QuestionsArray: FC<Props> = ({
         dispatch(handleTimeExpired(false));
         timer();
     }
-
-    useEffect(() => {
-        startNewGame();
-    }, []);
 
     const handlePrevPage = () => setPage((prevPage) => prevPage - 1);
     const handleNextPage = () => setPage((nextPage) => nextPage + 1);
