@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, FC } from "react";
 import "antd/dist/reset.css";
 import { Button } from "antd";
 import { GlobalStyle, Wrapper } from "./App.styles";
@@ -6,18 +6,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./redux/store";
 import QuestionsArray from "./components/QuestionsArray/QuestionsArray";
 import LoginForm from "./components/LoginForm/LoginForm";
-import { handleErrorMessage, handleShowForm, handleUserReg } from "./redux/actions";
+import { handleShowForm, handleUserReg } from "./redux/actions";
 import { handleSetUser, handleUserAuth } from "./redux/actions";
 import AuthService from "./services/AuthService";
 
-export const App = () => {
+export const App: FC = () => {
 
     const dispatch = useDispatch();
     const newQuestions = useSelector((state: RootState) => state.questions);
     const userAuthStatus = useSelector((state: RootState) => state.userStatus.user_auth);
     const showForm = useSelector((state: RootState) => state.showForm.showForm);
     const isUserReg = useSelector((state: RootState) => state.userStatus.user_reg);
-    const errorMessage = useSelector((state: RootState) => state.errorMessage.error_message);
 
     useEffect(() => {
         checkAuth();
@@ -30,7 +29,7 @@ export const App = () => {
             dispatch(handleUserAuth(true));
             dispatch(handleSetUser(response.data.user));
         } catch (e) {
-            dispatch(handleErrorMessage(e.response?.data?.message));
+            return;
         }
     }
 
@@ -43,16 +42,13 @@ export const App = () => {
                 <h1>Квиз</h1>
                 {
                     userAuthStatus
-                        ? <QuestionsArray
-                            newQuestions={ newQuestions }
-                        />
+                        ? <QuestionsArray newQuestions={ newQuestions } />
                         : showForm || isUserReg
                             ? <LoginForm />
                             : <Button onClick={ openForm }>
                                 Регистрация
                             </Button>
                 }
-                { errorMessage }
             </Wrapper>
         </>
     )
