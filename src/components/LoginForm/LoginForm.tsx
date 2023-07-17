@@ -13,6 +13,7 @@ const LoginForm: FC<Props> = () => {
 
     const dispatch = useDispatch();
     const userRegStatus = useSelector((state: RootState) => state.userStatus.user_reg);
+    const errorMessage = useSelector((state: RootState) => state.errorMessage.error_message);
 
     const [form] = Form.useForm<FormInstance>();
     const [email, setEmail] = useState<string>("");
@@ -25,11 +26,19 @@ const LoginForm: FC<Props> = () => {
                 : await AuthService.login(email, password);
             localStorage.setItem('token', response.data.accessToken);
             localStorage.setItem('login', response.data.user.email);
-            dispatch(isRegistration ? handleUserReg(true) : handleUserAuth(true));
+            dispatch(isRegistration ? handleUserReg(true) : handleUserAuth(true))
+            dispatch(
+                isRegistration
+                    ? handleErrorMessage(`Вы зарегистрированы как ${response.data.user.email}`)
+                    : handleErrorMessage(`Вы вошли как ${response.data.user.email}`)
+            )
             dispatch(handleSetUser(response.data.user));
-            dispatch(handleErrorMessage("Успешно"));
         } catch (e) {
-            dispatch(handleErrorMessage("Не получилось, попробуйте ещё раз!"));
+            dispatch(
+                isRegistration
+                    ? handleErrorMessage(`Пользователь не зарегистрирован`)
+                    : handleErrorMessage(`Пользователь не авторизован`)
+            )
         }
     }
 
@@ -86,12 +95,12 @@ const LoginForm: FC<Props> = () => {
                     value={ userRegStatus ? "Вход" : "Регистрация" }
                     onClick={ form.submit }
                     disabled={
-                        !form.isFieldsTouched(true)
-                            || form.getFieldsError()
-                                .filter(({ errors }) => errors.length).length > 0
+                        !form.isFieldsTouched(true) || form.getFieldsError()
+                            .filter(({ errors }) => errors.length).length > 0
                     }
                 />
             </Form.Item>
+            <h4>{ errorMessage }</h4>
         </Form>
     )
 }
