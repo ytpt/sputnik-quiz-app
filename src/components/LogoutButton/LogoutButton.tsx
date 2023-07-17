@@ -15,18 +15,21 @@ const LogoutButton: FC<Props> = ({
 }) => {
 
     const dispatch = useDispatch();
+    const isUserAuth = useSelector((state: RootState) => state.userStatus.user_auth);
     const errorMessage = useSelector((state: RootState) => state.errorMessage.error_message);
+
 
     const logout = async function() {
         try {
-            const response = await AuthService.logout();
+            await AuthService.logout();
             localStorage.removeItem("token");
             localStorage.removeItem("login");
             dispatch(handleUserAuth(false));
             dispatch(handleSetUser({} as IUser));
             dispatch(handleTimerActive(false));
+            dispatch(handleErrorMessage(""));
         } catch(e) {
-            dispatch(handleErrorMessage(e.response?.data?.message));
+            dispatch(handleErrorMessage("Что-то пошло не так!"));
         }
     }
 
@@ -35,7 +38,7 @@ const LogoutButton: FC<Props> = ({
             <Button onClick={ logout }>
                 { value }
             </Button>
-            { errorMessage }
+            { isUserAuth && <div>{ errorMessage }</div> }
         </>
     )
 }
