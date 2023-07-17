@@ -1,4 +1,5 @@
 import React, { useEffect, useState, FC } from "react";
+import { Timer } from "./QuestionsArray.styles";
 import QuestionCard from "../QuestionCard/QuestionCard";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
@@ -6,8 +7,8 @@ import { shuffleArray } from "../../utils";
 import PaginationButton from "../PaginationButton/PaginationButton";
 import Results from "../Results/Results";
 import LogoutButton from "../LogoutButton/LogoutButton";
-import { handleCheckboxClicked, handleScoreShown, handleStartQuiz, handleTimeExpired, handleTimerActive, resetUserScore } from "../../redux/actions";
 import { IQuestion } from "../../redux/reducers/questionsReducer";
+import { handleCheckboxClicked, handleErrorMessage, handleScoreShown, handleStartQuiz, handleTimeExpired, handleTimerActive, resetUserScore } from "../../redux/actions";
 
 type Props = {
     newQuestions: IQuestion[];
@@ -17,9 +18,7 @@ type SelectedAnswers = {
     [questionNumber: number]: string | null;
 }
 
-const QuestionsArray: FC<Props> = ({
-    newQuestions,
-}) => {
+const QuestionsArray: FC<Props> = ({ newQuestions}) => {
 
     const dispatch = useDispatch();
     const userScore = useSelector((state: RootState) => state.userScore.user_score);
@@ -29,16 +28,19 @@ const QuestionsArray: FC<Props> = ({
     const isScoreShown = useSelector((state: RootState) => state.isScoreShown.is_score_shown);
 
     const [selectedAnswers, setSelectedAnswers] = useState<SelectedAnswers>({});
+    const [remainingTime, setRemainingTime] = useState<number>(30);
 
     const totalQuestionsCount = newQuestions.length;
     const [page, setPage] = useState(1);
-    const limit = 5, startIndex = (page - 1) * limit, endIndex = startIndex + limit;
+    const limit = 5;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
 
     useEffect(() => {
         startNewGame();
     }, []);
 
-    const startNewGame = () => {
+    const startNewGame = async () => {
         setSelectedAnswers({});
         dispatch(resetUserScore(0));
         dispatch(handleCheckboxClicked(false));
@@ -46,6 +48,7 @@ const QuestionsArray: FC<Props> = ({
         dispatch(handleTimerActive(true));
         dispatch(handleScoreShown(false));
         dispatch(handleTimeExpired(false));
+        dispatch((handleErrorMessage("")));
         timer();
     }
 
@@ -62,23 +65,24 @@ const QuestionsArray: FC<Props> = ({
             ])
         }));
 
-   let seconds: number = 0;
    let interval: ReturnType<typeof setTimeout>;
 
-   const timer = (minutes: number = 1) => {
-       seconds = minutes * 60 || 0;
+   const timer = (minutes: number = 0.5) => {
+       const initialSeconds = minutes * 60 || 0;
+       setRemainingTime(initialSeconds);
        dispatch(handleTimerActive(true));
 
        interval = setInterval(() => {
-           seconds--;
-
-           if (!seconds) {
-               clearInterval(interval);
-               dispatch(handleTimerActive(false));
-               dispatch(handleScoreShown(true));
-               dispatch(handleTimeExpired(true));
-               alert("Время вышло :(");
-           }
+           setRemainingTime((prevTime) => {
+               if (prevTime <= 0) {
+                   clearInterval(interval);
+                   dispatch(handleTimerActive(false));
+                   dispatch(handleScoreShown(true));
+                   dispatch(handleTimeExpired(true));
+                   return 0;
+               }
+               return prevTime - 1;
+           });
        }, 1000);
    }
 
@@ -91,6 +95,9 @@ const QuestionsArray: FC<Props> = ({
 
     return (
         <>
+            <Timer>
+                { isGameStarted && remainingTime >= 0 && (<h3>Осталось времени: { remainingTime }</h3>) }
+            </Timer>
             {/*Questions*/}
             {
                 isGameStarted
@@ -113,7 +120,7 @@ const QuestionsArray: FC<Props> = ({
                     || page > 1
                         &&<PaginationButton onClick={ handlePrevPage } value="Предыдущая страница" />
             }
-            {/*Timer*/}
+            {/*Results*/}
             {
                 isGameStarted && !activeTimer
                     && <Results
