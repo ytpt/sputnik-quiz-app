@@ -2,10 +2,10 @@ import React, { useState, FC }  from "react";
 import { Form, Input } from "antd";
 import AuthService from "../../services/AuthService";
 import { useDispatch, useSelector } from "react-redux";
-import { handleErrorMessage, handleSetUser, handleUserAuth, handleUserReg } from "../../redux/actions";
 import { RootState } from "../../redux/store";
 import FormButton from "../FormButton/FormButton";
 import { FormInstance } from "antd";
+import { handleErrorMessage, handleLoaderActive, handleSetUser, handleUserAuth, handleUserReg } from "../../redux/actions";
 
 type Props = {};
 
@@ -14,6 +14,7 @@ const LoginForm: FC<Props> = () => {
     const dispatch = useDispatch();
     const userRegStatus = useSelector((state: RootState) => state.userStatus.user_reg);
     const errorMessage = useSelector((state: RootState) => state.errorMessage.error_message);
+    const loader = useSelector((state: RootState) => state.isLoaderActive.is_loader_active);
 
     const [form] = Form.useForm<FormInstance>();
     const [email, setEmail] = useState<string>("");
@@ -21,6 +22,7 @@ const LoginForm: FC<Props> = () => {
 
     const performAuth = async (email: string, password: string, isRegistration: boolean) => {
         try {
+            dispatch(handleLoaderActive(true));
             const response = isRegistration
                 ? await AuthService.registration(email, password)
                 : await AuthService.login(email, password);
@@ -33,12 +35,15 @@ const LoginForm: FC<Props> = () => {
                     : handleErrorMessage(`Вы вошли как ${response.data.user.email}`)
             )
             dispatch(handleSetUser(response.data.user));
+            response && dispatch(handleLoaderActive(false));
         } catch (e) {
+            dispatch(handleLoaderActive(true));
             dispatch(
                 isRegistration
-                    ? handleErrorMessage(`Пользователь не зарегистрирован`)
-                    : handleErrorMessage(`Пользователь не авторизован`)
+                    ? handleErrorMessage(`Ошибка регистрации`)
+                    : handleErrorMessage(`Ошибка авторизации`)
             )
+            e && dispatch(handleLoaderActive(false));
         }
     }
 
@@ -100,7 +105,7 @@ const LoginForm: FC<Props> = () => {
                     }
                 />
             </Form.Item>
-            <h4>{ errorMessage }</h4>
+            { !loader && <h4>{ errorMessage }</h4> }
         </Form>
     )
 }
