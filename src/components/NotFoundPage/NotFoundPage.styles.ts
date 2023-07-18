@@ -28,6 +28,6 @@ export const Wrapper = styled.div`
     margin: 10vh auto;
     
     h1 {
-        color: red;
+        color: #000;
     }
 `;
