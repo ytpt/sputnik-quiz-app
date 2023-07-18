@@ -11,6 +11,7 @@ import timerReducer from "./reducers/timerReducer";
 import showScoreReducer from "./reducers/showScoreReducer";
 import timeExpiredReducer from "./reducers/timeExpiredReducer";
 import errorMessageReducer from "./reducers/errorMessageReducer";
+import loaderReducer from "./reducers/loaderReducer";
 
 const rootReducer = combineReducers({
     userScore: userScoreReducer,
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
     isScoreShown: showScoreReducer,
     isTimeExpired: timeExpiredReducer,
     errorMessage: errorMessageReducer,
+    isLoaderActive: loaderReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>;

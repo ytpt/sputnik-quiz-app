@@ -1,6 +1,6 @@
 import { IS_GAME_STARTED, IS_CHECKBOX_VALID, IS_CHECKBOX_CLICKED, ADD_USER_SCORE,
     RESET_USER_SCORE, IS_USER_REG, IS_USER_AUTH, SET_USER, SHOW_FORM,
-    IS_TIMER_ACTIVE, IS_SCORE_SHOWN, IS_TIME_EXPIRED, ERROR_MESSAGE } from "./actionsTypes";
+    IS_TIMER_ACTIVE, IS_SCORE_SHOWN, IS_TIME_EXPIRED, ERROR_MESSAGE, IS_LOADER_ACTIVE } from "./actionsTypes";
 import { IUser } from "../models/response/IUser";
 
 export const addUserScore = (payload: number) => ({
@@ -63,7 +63,12 @@ export const handleTimeExpired = (payload: boolean) => ({
     payload: payload,
 });
 
-export const handleErrorMessage= (payload: string) => ({
+export const handleErrorMessage = (payload: string) => ({
     type: ERROR_MESSAGE,
+    payload: payload,
+});
+
+export const handleLoaderActive = (payload: boolean) => ({
+    type: IS_LOADER_ACTIVE,
     payload: payload,
 });

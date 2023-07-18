@@ -11,3 +11,4 @@ export const IS_TIMER_ACTIVE = "IS_TIMER_ACTIVE";
 export const IS_SCORE_SHOWN = "IS_SCORE_SHOWN";
 export const IS_TIME_EXPIRED = "IS_TIME_EXPIRED";
 export const ERROR_MESSAGE = "ERROR_MESSAGE";
+export const IS_LOADER_ACTIVE = "IS_LOADER_ACTIVE";
