@@ -11,5 +11,10 @@
     "include": [
       "src",
       "./src/declaration.d.ts"
-    ]
-  }
+    ],
+    "exclude": ["node_modules"],
+    "types": ["jest"],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    }
+}
