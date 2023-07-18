@@ -2,15 +2,14 @@ import React, { useEffect, FC } from "react";
 import "antd/dist/reset.css";
 import { Button } from "antd";
 import { GlobalStyle, Wrapper } from "./App.styles";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "./redux/store";
-import QuestionsArray from "./components/QuestionsArray/QuestionsArray";
-import LoginForm from "./components/LoginForm/LoginForm";
-import { handleShowForm, handleUserReg } from "./redux/actions";
-import { handleSetUser, handleUserAuth } from "./redux/actions";
-import AuthService from "./services/AuthService";
+import { useDispatch, useSelector} from "react-redux";
+import { RootState } from "../../redux/store";
+import QuestionsArray from "../QuestionsArray/QuestionsArray";
+import LoginForm from "../LoginForm/LoginForm";
+import { handleShowForm, handleUserReg, handleSetUser, handleUserAuth } from "../../redux/actions";
+import AuthService from "../../services/AuthService";
 
-export const App: FC = () => {
+const App: FC = () => {
 
     const dispatch = useDispatch();
     const newQuestions = useSelector((state: RootState) => state.questions);
@@ -53,3 +52,5 @@ export const App: FC = () => {
         </>
     )
 };
+
+export default App;
