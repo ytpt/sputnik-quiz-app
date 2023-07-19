@@ -17,7 +17,7 @@ const FormButton: FC<Props> = ({
         <Button
             type="primary"
             htmlType="submit"
-            onClick={ onClick }
+            onClick={ (e) => e.preventDefault && onClick }
             disabled={ disabled }
         >
             { value }
