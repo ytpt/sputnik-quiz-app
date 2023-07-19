@@ -1,13 +1,13 @@
 import React, { useEffect, FC } from "react";
 import "antd/dist/reset.css";
-import { Button } from "antd";
+import { Alert, Button } from "antd";
 import { GlobalStyle, Wrapper } from "./App.styles";
 import { useDispatch, useSelector} from "react-redux";
 import { RootState } from "../../redux/store";
 import QuestionsArray from "../QuestionsArray/QuestionsArray";
 import LoginForm from "../LoginForm/LoginForm";
-import { handleShowForm, handleUserReg, handleSetUser, handleUserAuth } from "../../redux/actions";
 import AuthService from "../../services/AuthService";
+import { handleShowForm, handleUserReg, handleSetUser, handleUserAuth, handleErrorMessage, handleLoaderActive } from "../../redux/actions";
 
 const App: FC = () => {
 
@@ -16,19 +16,23 @@ const App: FC = () => {
     const userAuthStatus = useSelector((state: RootState) => state.userStatus.user_auth);
     const showForm = useSelector((state: RootState) => state.showForm.showForm);
     const isUserReg = useSelector((state: RootState) => state.userStatus.user_reg);
+    const loader = useSelector((state: RootState) => state.isLoaderActive.is_loader_active);
 
     useEffect(() => {
-        checkAuth();
+        localStorage.getItem("token") && checkAuth();
     }, []);
 
     const checkAuth = async () => {
-        localStorage.getItem("token") && dispatch(handleUserReg(true));
+        dispatch(handleLoaderActive(true));
+        dispatch(handleUserReg(true));
         try {
             const response = await AuthService.checkAuth();
             dispatch(handleUserAuth(true));
             dispatch(handleSetUser(response.data.user));
         } catch (e) {
-            return;
+            dispatch(handleErrorMessage("Что-то пошло не так.."));
+        } finally {
+            dispatch(handleLoaderActive(false));
         }
     }
 
@@ -48,6 +52,7 @@ const App: FC = () => {
                                 Регистрация
                             </Button>
                 }
+                { loader && <Alert message="Загрузка..." /> }
             </Wrapper>
         </>
     )
