@@ -19,5 +19,4 @@ export default class AuthService {
     static async checkAuth(): Promise<AxiosResponse<AuthResponse>> {
         return $api.get<AuthResponse>(`${API_URL}/refresh`, { withCredentials: true });
     }
-
 }
