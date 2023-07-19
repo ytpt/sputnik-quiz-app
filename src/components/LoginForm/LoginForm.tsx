@@ -1,5 +1,5 @@
 import React, { useState, FC }  from "react";
-import { Form, Input } from "antd";
+import { Form, Input, Alert } from "antd";
 import AuthService from "../../services/AuthService";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
@@ -21,8 +21,8 @@ const LoginForm: FC<Props> = () => {
     const [password, setPassword] = useState<string>("");
 
     const performAuth = async (email: string, password: string, isRegistration: boolean) => {
+        dispatch(handleLoaderActive(true));
         try {
-            dispatch(handleLoaderActive(true));
             const response = isRegistration
                 ? await AuthService.registration(email, password)
                 : await AuthService.login(email, password);
@@ -31,19 +31,18 @@ const LoginForm: FC<Props> = () => {
             dispatch(isRegistration ? handleUserReg(true) : handleUserAuth(true))
             dispatch(
                 isRegistration
-                    ? handleErrorMessage(`Вы зарегистрированы как ${response.data.user.email}`)
+                    ? handleErrorMessage(`Пользователь ${response.data.user.email} зарегистрирован`)
                     : handleErrorMessage(`Вы вошли как ${response.data.user.email}`)
             )
             dispatch(handleSetUser(response.data.user));
-            response && dispatch(handleLoaderActive(false));
         } catch (e) {
-            dispatch(handleLoaderActive(true));
             dispatch(
                 isRegistration
                     ? handleErrorMessage(`Ошибка регистрации`)
                     : handleErrorMessage(`Ошибка авторизации`)
             )
-            e && dispatch(handleLoaderActive(false));
+        } finally {
+            dispatch(handleLoaderActive(false));
         }
     }
 
@@ -105,7 +104,7 @@ const LoginForm: FC<Props> = () => {
                     }
                 />
             </Form.Item>
-            { !loader && <h4>{ errorMessage }</h4> }
+            { !loader && (errorMessage && <Alert message={ errorMessage } />) }
         </Form>
     )
 }
