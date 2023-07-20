@@ -5,7 +5,7 @@ export interface IState {
     user: IUser | null;
 }
 
-interface IAction {
+export interface IAction {
     type: string;
     payload: IUser | null;
 }
