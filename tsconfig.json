@@ -6,15 +6,12 @@
       "esModuleInterop": true,
       "allowSyntheticDefaultImports": true,
       "module": "commonjs",
-      "jsx": "react"
+      "jsx": "react",
+      "types": ["jest", "react"]
     },
     "include": [
       "src",
       "./src/declaration.d.ts"
     ],
-    "exclude": ["node_modules"],
-    "types": ["jest"],
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    }
+    "exclude": ["node_modules"]
 }
