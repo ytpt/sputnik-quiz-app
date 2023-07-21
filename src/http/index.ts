@@ -4,7 +4,7 @@ import { handleErrorMessage } from "../redux/actions";
 import { useDispatch } from "react-redux";
 
 // export const API_URL = `http://localhost:5000/api`;
-export const API_URL = `https://quiz-front-one.vercel.app/api`;
+export const API_URL = `http://95.163.233.232:5000/api`;
 export const $api = axios.create({
     withCredentials: true,
     baseURL: API_URL,
