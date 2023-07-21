@@ -15,7 +15,8 @@ app.use(cors({
     credentials: true,
     origin: process.env.CLIENT_URL,
 }));
-app.use("/api", router);
+// app.use("/api", router);
+app.use("/api/v1", router);
 app.use(errorMiddleware);
 
 const start = async () => {
