@@ -6,7 +6,8 @@
   "scripts": {
     "start": "webpack serve --mode development",
     "build": "webpack",
-    "test": "jest"
+    "test": "jest",
+    "vercel-build": "echo hello"
   },
   "author": "",
   "license": "ISC",
