@@ -3,7 +3,7 @@ import { AuthResponse } from "../models/response/AuthResponse";
 import { handleErrorMessage } from "../redux/actions";
 import { useDispatch } from "react-redux";
 
-export const API_URL = `https://sputnik-quiz-app-backend.vercel.app/`;
+export const API_URL = `https://quiz-app-server-delta.vercel.app/api`;
 export const $api = axios.create({
     withCredentials: true,
     baseURL: API_URL,
